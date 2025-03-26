@@ -1,5 +1,10 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "wailsjs/*": ["wailsjs"],
+    },
     "target": "ESNext",
     "useDefineForClassFields": true,
     "lib": [
@@ -14,7 +19,7 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "module": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "Node", //Node
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
