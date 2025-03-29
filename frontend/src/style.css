@@ -1,8 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
- 
+
 @custom-variant dark (&:is(.dark *));
- 
+
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -38,7 +38,7 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
 }
- 
+
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
@@ -73,7 +73,7 @@
   --sidebar-border: oklch(0.269 0 0);
   --sidebar-ring: oklch(0.439 0 0);
 }
- 
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -112,14 +112,172 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 }
- 
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
+  button:not([disabled]),
+  [role="button"]:not([disabled]) {
+    cursor: pointer;
+  }
+
+
+}
+
+[contenteditable="plaintext-only"]:empty:before {
+  content: attr(aria-placeholder);
+  opacity: .5;
+  pointer-events: none;
+  display: block;
+  /* For Firefox */
+}
+
+.dark {
+  ::selection {
+    background: #004aa1;
+  }
+
+  *[contentEditable] {
+    outline: none;
+  }
+}
+
+/* yoopta styles */
+.dark .yoopta-editor {
+  --popover-bg: color-mix(in srgb, var(--background), white 2%);
+  --intense-popover-bg: rgb(15 15 15 / 1);
+  --border-color: rgb(40 40 40 / 1);
+  --selection-bg: rgb(25 25 25 / 1);
+
+  .yoopta-action-menu-list-content {
+    background-color: var(--popover-bg);
+    border-color: var(--border-color);
+
+    button.yoopta-button .yoo-action-menu-flex {
+      background-color: var(--intense-popover-bg);
+      border-color: var(--border-color);
+    }
+
+    .yoopta-button[aria-selected=true],
+    .yoopta-button:hover {
+      background-color: var(--selection-bg);
+    }
+  }
+
+  .yoopta-block-options-menu-content {
+    border-color: var(--border-color);
+    background-color: var(--popover-bg);
+
+    .yoopta-block-options-button:hover {
+      background-color: var(--selection-bg);
+    }
+  }
+
+  .yoopta-block-action-buttons button {
+    color: color-mix(in srgb, var(--foreground), black 10%);
+  }
+
+  .yoopta-callout {
+    --tw-bg-opacity: .25;
+    color: var(--foreground);
+  }
+
+  .yoopta-block-options-button[style*="background-color"] {
+    background-color: var(--border-color) !important;
+
+    & svg {
+      color: #fff;
+    }
+  }
+
+  .yoo-embed-flex {
+    background-color: var(--popover-bg);
+    color: var(--foreground) !important;
+  }
+
+  .yoo-embed-flex:disabled {
+    opacity: .5;
+  }
+
+  .yoopta-toolbar-root {
+    background-color: var(--popover-bg);
+    border-color: var(--border-color);
+
+    .yoopta-button.yoopta-toolbar-item:hover,
+    .yoopta-button.yoopta-toolbar-item-mark:hover {
+      background-color: var(--border-color);
+    }
+
+    .yoopta-button.yoopta-toolbar-item[style*="background-color"],
+    .yoopta-button.yoopta-toolbar-item-mark[style*="background-color"] {
+      background-color: var(--border-color) !important;
+    }
+  }
+
+  /* text and background color change */
+  .yoo-toolbar-text-gray-600 {
+    color: var(--foreground) !important;
+  }
+
+  .yoo-toolbar-text-gray-600:hover {
+    background: var(--border-color) !important;
+  }
+
+  .yoopta-link-tool,
+  .yoo-toolbar-border {
+    background-color: var(--popover-bg);
+    border-color: var(--border-color);
+
+    label,
+    input {
+      color: var(--foreground);
+    }
+  }
+
+  /*.yoo-toolbar-border{
+    background-color: var(--popover-bg);
+  }*/
+
+  .yoopta-accordion-list-item-heading div.yoo-accordion-absolute button {
+    filter: invert(1);
+  }
+
+  .yoopta-mark-code {
+    background-color: #1e1e1e;
+  }
+
+  #yoo-select-content {
+    background-color: var(--popover-bg);
+
+    button:hover {
+      background-color: var(--selection-bg);
+    }
+
+    button:focus {
+      background-color: var(--border-color) !important;
+    }
+  }
+
+  .yoopta-code-cm-editor .cm-editor {
+    border-color: var(--border-color);
+  }
+
+
+
+  .yoopta-extended-block-actions {
+    --tw-bg-opacity: unset;
+  }
+
+}
+
+.yoopta-editor .yoopta-callout-options {
+  color: var(--foreground);
 }
 
 /*@import "tailwindcss";

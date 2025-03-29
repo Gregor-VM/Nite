@@ -1,48 +1,97 @@
-import React, { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Button } from './ui/button'
+import { GetTabs } from 'wailsjs/go/main/App'
+import { main } from 'wailsjs/go/models'
+import { CreateTab } from './dialogs/create-tab';
+import { useTab } from '../hooks/tab-provider';
+import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from './ui/context-menu';
+import { ContextMenuShortcut } from './ui/context-menu';
 import { Plus } from 'lucide-react';
-import { Greet } from 'wailsjs/go/main/App'
-
-const tasks = [
-    {
-        id: 1,
-        name: "Trash 🗑",
-    },
-    {
-        id: 2,
-        name: "Job",
-    }
-].reverse()
-
+import { DeleteTab } from './dialogs/delete-tab';
+import useShortcut from '@/hooks/useShortcut';
 
 function Tabs() {
 
-  const [selected, setSelected] = useState(tasks[0].id);
+  const { currentTab, setCurrentTab, loading, setLoading } = useTab();
+  useShortcut({ key: "e", callback: () => showEditTab(currentTab) })
+  useShortcut({ key: "r", callback: () => showDeleteModal(currentTab) })
 
-  const getButtonVariant = useCallback((taskId: number) => {
-    return selected === taskId ? "secondary" : "ghost"
+  const [editTab, setEditTab] = useState<main.Tab | null>(null);
+  const [openModal, setOpenModal] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [selected, setSelected] = useState<number>();
+  const [tabs, setTabs] = useState<main.Tab[]>([]);
+
+  const getButtonVariant = useCallback((tabId: number) => {
+    return selected === tabId ? "secondary" : "ghost"
   }, [selected])
 
-  const changeTab = (taskId: number) => setSelected(taskId);
+  const changeTab = (tab: main.Tab) => {
+    setSelected(tab.ID);
+    setCurrentTab(tab);
+  };
 
-  const addNewTab = async () => {
-
-    const res = await Greet("Gregor")
-    console.log(res)
-
+  const getTabs = async () => {
+    if (loading) return;
+    setLoading(true);
+    const res = await GetTabs();
+    if (res) {
+      const data = res.reverse()
+      setTabs(data);
+      const selectedId = selected ? data.find((tab => tab.ID === selected))?.ID : data[0].ID
+      setSelected(selectedId);
+      const selectedTab = data.find(tab => tab.ID === selectedId)
+      if (selectedTab) setCurrentTab(selectedTab);
+    }
+    setLoading(false);
   }
+
+  const showCreateTab = () => {
+    setEditTab(null);
+    setOpenModal(true);
+  }
+
+  const showEditTab = (tab: main.Tab) => {
+    setEditTab(tab);
+    setOpenModal(true);
+  }
+
+  const showDeleteModal = (tab: main.Tab) => {
+    setEditTab(tab);
+    setOpenDeleteModal(true);
+  }
+
+  useEffect(() => {
+    getTabs();
+  }, []);
 
   return (
     <nav className="flex gap-2">
-        {tasks.map(task => {
-            return  <Button 
-            onClick={() => changeTab(task.id)}
-            variant={getButtonVariant(task.id)}
-            >{task.name}</Button>
-        })}
-        <Button onClick={addNewTab} variant="ghost">
-            <Plus />
-        </Button>
+      {tabs.map(tab => {
+        return (
+          <ContextMenu key={tab.ID}>
+            <ContextMenuTrigger>
+              <Button
+                onClick={() => changeTab(tab)}
+                variant={getButtonVariant(tab.ID)}
+              >{tab.Title}</Button>
+            </ContextMenuTrigger>
+            <ContextMenuContent className="w-36">
+              <ContextMenuItem onClick={() => showEditTab(tab)}>
+                Edit
+                <ContextMenuShortcut>⌘ + E</ContextMenuShortcut>
+              </ContextMenuItem>
+              <ContextMenuItem onClick={() => showDeleteModal(tab)} disabled={tab.ID === 1} variant='destructive'>
+                Delete
+                <ContextMenuShortcut>⌘ + D</ContextMenuShortcut>
+              </ContextMenuItem>
+            </ContextMenuContent>
+          </ContextMenu>
+        );
+      })}
+      <Button onClick={showCreateTab} variant="ghost"><Plus /></Button>
+      <CreateTab tabToEdit={editTab} open={openModal} setOpen={setOpenModal} updateTabs={getTabs} />
+      <DeleteTab updateTabs={getTabs} tabToEdit={editTab} open={openDeleteModal} setOpen={setOpenDeleteModal} />
     </nav>
   )
 }

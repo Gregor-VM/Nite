@@ -12,6 +12,10 @@ import (
 var assets embed.FS
 
 func main() {
+
+	initDB()
+	defer db.Close()
+
 	// Create an instance of the app structure
 	app := NewApp()
 
