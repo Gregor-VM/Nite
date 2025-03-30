@@ -30,6 +30,7 @@ import { FormEventHandler, useEffect, useMemo, useRef, useState } from 'react';
 import { WITH_BASIC_INIT_VALUE } from './initValue';
 import { useNoteState } from '@/hooks/note-provider';
 import { useTab } from '@/hooks/tab-provider';
+import { InsertNote, UpdateNote } from 'wailsjs/go/main/App';
 
 const plugins = [
   Paragraph,
@@ -120,7 +121,7 @@ function WithBaseFullSetup() {
   const state = useNoteState();
   const tab = useTab();
   const [value, setValue] = useState(WITH_BASIC_INIT_VALUE);
-  const [title, setTitle] = useState<string | null>(null);
+  //const [title, setTitle] = useState<string | null>(null);
   const editor = useMemo(() => createYooptaEditor(), []);
   const selectionRef = useRef(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
@@ -130,30 +131,36 @@ function WithBaseFullSetup() {
   };
 
   const onTitleChange: FormEventHandler<HTMLHeadingElement> = (e) => {
-    setTitle(e.currentTarget.textContent)
+    state.setTitle(e.currentTarget.textContent ?? "")
   }
 
   const editorClick = () => {
     //editor.focus()
   }
 
-  useEffect(() => {
-    if (title && state.id === 0) {
-      //create note in the database
-      //set id to the noteState
-    }
-  }, [title, state.id, tab.currentTab])
+  const createNewNote = async (title: string) => {
+    console.log("creating")
+    const id = await InsertNote(title, tab.currentTab.ID)
+    state.setId(id)
+    state.setTitle(title)
+  }
 
   useEffect(() => {
-    if (state.id) {
-      //update title to database
-      //update file
+    if (state.title && state.id === 0) {
+      createNewNote(state.title)
     }
-  }, [state.id, title])
+  }, [state.title, state.id, tab.currentTab])
 
   useEffect(() => {
-    if (!title && titleRef.current) titleRef.current!.textContent = ""
-  }, [title]);
+    if (state.id && state.title) {
+      UpdateNote(state.title, state.id)
+    }
+  }, [state.id, state.title])
+
+  useEffect(() => {
+    if (!state.title && titleRef.current) titleRef.current!.textContent = ""
+    // TODO: Remove if title and content are empty
+  }, [state.title]);
 
   useEffect(() => {
     let listener;
@@ -178,7 +185,7 @@ function WithBaseFullSetup() {
 
   return (
     <>
-      <h1 ref={titleRef} onInput={onTitleChange} aria-placeholder="New note title" className='text-5xl md:pl-[8rem] outline-none' contentEditable="plaintext-only"></h1>
+      <h1 ref={titleRef} onBlur={onTitleChange} aria-placeholder="New note title" className='text-5xl md:pl-[8rem] outline-none' contentEditable="plaintext-only">{state?.title ?? ""}</h1>
       <div
         className="w-full min-h-screen md:pt-[1rem] md:px-[8rem] pb-[.2rem] flex justify-center"
         ref={selectionRef}

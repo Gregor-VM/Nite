@@ -6,7 +6,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <SidebarProvider>
             <AppSidebar />
             <main className="w-full">
-                <SidebarTrigger className="absolute mt-1 ml-1" />
+                <SidebarTrigger className="fixed mt-1 ml-1" />
                 {children}
             </main>
         </SidebarProvider>

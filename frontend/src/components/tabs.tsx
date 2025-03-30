@@ -9,9 +9,11 @@ import { ContextMenuShortcut } from './ui/context-menu';
 import { Plus } from 'lucide-react';
 import { DeleteTab } from './dialogs/delete-tab';
 import useShortcut from '@/hooks/useShortcut';
+import { useNoteState } from '@/hooks/note-provider';
 
 function Tabs() {
 
+  const { reset } = useNoteState();
   const { currentTab, setCurrentTab, loading, setLoading } = useTab();
   useShortcut({ key: "e", callback: () => showEditTab(currentTab) })
   useShortcut({ key: "r", callback: () => showDeleteModal(currentTab) })
@@ -27,6 +29,7 @@ function Tabs() {
   }, [selected])
 
   const changeTab = (tab: main.Tab) => {
+    reset();
     setSelected(tab.ID);
     setCurrentTab(tab);
   };

@@ -130,6 +130,11 @@
 
 }
 
+/* This should be a feature consider create a pr to the yoopta project */
+.yoopta-placeholder:after {
+  pointer-events: none;
+}
+
 [contenteditable="plaintext-only"]:empty:before {
   content: attr(aria-placeholder);
   opacity: .5;

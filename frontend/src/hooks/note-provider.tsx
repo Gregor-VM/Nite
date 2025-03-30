@@ -9,13 +9,15 @@ type NoteProviderState = {
   title: string
   setTitle: (title: string) => void
   setId: (id: number) => void
+  reset: () => void
 }
 
 const initialState: NoteProviderState = {
   id: 0,
   title: "",
   setTitle: () => { },
-  setId: () => { }
+  setId: () => { },
+  reset: () => { }
 }
 
 const NoteProviderContext = createContext<NoteProviderState>(initialState)
@@ -30,6 +32,7 @@ export function NoteProvider({
     ...state,
     setTitle: useCallback((title: string) => setState(prev => ({ ...prev, title })), []),
     setId: useCallback((id: number) => setState(prev => ({ ...prev, id })), []),
+    reset: useCallback(() => setState(initialState), [])
   }
 
   return (

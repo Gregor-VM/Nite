@@ -12,6 +12,13 @@ type Tab struct {
 	Title string
 }
 
+type Note struct {
+	ID        int
+	Title     string
+	TabId     int
+	IsDeleted bool
+}
+
 var db *sql.DB
 
 func initDB() {
@@ -25,6 +32,17 @@ func initDB() {
 	CREATE TABLE IF NOT EXISTS tabs (
 	id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 	title TEXT
+	);`
+
+	_, err = db.Exec(sqlStmt)
+	if err != nil {
+		log.Fatalf("Error creating table: %q: %s\n", err, sqlStmt)
+	}
+
+	sqlStmt = `
+	CREATE TABLE IF NOT EXISTS notes (
+	id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+	title TEXT, TabId INTEGER DEFAULT 1 NOT NULL, IsDeleted BIT DEFAULT 0 NOT NULL
 	);`
 
 	_, err = db.Exec(sqlStmt)
