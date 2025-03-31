@@ -100,7 +100,7 @@ func (a *App) DeleteTab(tabId int) bool {
 func (a *App) GetNotes(tabId int) []Note {
 	notes := []Note{}
 
-	rows, err := db.Query("SELECT * FROM notes WHERE tabId=?", tabId)
+	rows, err := db.Query("SELECT * FROM notes WHERE tabId=? ORDER BY ID DESC", tabId)
 	if err != nil {
 		log.Fatal(err)
 	}

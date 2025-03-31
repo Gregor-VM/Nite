@@ -117,21 +117,40 @@ const TOOLS = {
 const MARKS = [Bold, Italic, CodeMark, Underline, Strike, Highlight];
 
 function WithBaseFullSetup() {
-  const note = useStateStore(state => state.note);
-  const setNote = useStateStore(state => state.setNote);
+  const currentNoteIndex = useStateStore(state => state.currentNoteIndex);
+  const setCurrentNoteIndex = useStateStore(state => state.setCurrentNoteIndex);
+  const notes = useStateStore(state => state.notes);
+  const note = notes[currentNoteIndex];
+  const setNotes = useStateStore(state => state.setNotes);
   const currentTab = useStateStore(state => state.currentTab);
   const [value, setValue] = useState(WITH_BASIC_INIT_VALUE);
-  //const [title, setTitle] = useState<string | null>(null);
   const editor = useMemo(() => createYooptaEditor(), []);
   const selectionRef = useRef(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
+
+  const [title, setTitle] = useState("");
 
   const onChange = (newValue: YooptaContentValue, options: YooptaOnChangeOptions) => {
     setValue(newValue);
   };
 
-  const onTitleChange: FormEventHandler<HTMLHeadingElement> = (e) => {
-    setNote({ ...note, Title: e.currentTarget.textContent ?? "" })
+  const handleChangeTitle = () => {
+    const value = titleRef.current?.textContent ?? "";
+    if (!note) {
+      createNewNote();
+    }
+    if (currentNoteIndex === -1) return;
+
+    const notesCopy = [...notes];
+    notesCopy[currentNoteIndex].Title = value;
+    setNotes(notesCopy);
+    // make sure to show the placeholder
+    if (value === "" && titleRef.current) titleRef.current!.textContent = ""
+  }
+
+  const onTitleChange: FormEventHandler<HTMLHeadingElement> = async (e) => {
+    const value = e.currentTarget.textContent ?? "";
+    if (value) setTitle(value)
   }
 
   const editorClick = () => {
@@ -139,29 +158,26 @@ function WithBaseFullSetup() {
   }
 
   const createNewNote = async () => {
-    const id = await InsertNote(note.Title, currentTab.ID)
-    setNote({ ID: id, Title: note.Title, IsDeleted: false, TabId: currentTab.ID })
+    const id = await InsertNote(note?.Title ?? "", currentTab.ID)
+    const newNote = { ID: id, Title: note?.Title ?? "", IsDeleted: false, TabId: currentTab.ID };
+    setNotes([newNote, ...notes]);
+    setCurrentNoteIndex(0);
   }
 
-  useEffect(() => {
-    if (note.Title && note.ID === 0) {
-      createNewNote()
-    }
-  }, [note, currentTab])
 
   useEffect(() => {
-    if (note.ID && note.Title) {
+    if (note?.ID && note?.Title) {
       UpdateNote(note.Title, note.ID)
     }
-  }, [note])
+  }, [note?.Title])
 
   useEffect(() => {
-    if (!note.Title && titleRef.current) titleRef.current!.textContent = ""
-    // TODO: Remove if title and content are empty
-  }, [note]);
+    if (note && note?.Title) {
+      setTitle(note.Title);
+    }
+  }, [note?.ID])
 
   useEffect(() => {
-    let listener;
     const preventLineBreaks = (e: KeyboardEvent) => {
       if (e.key === "Enter" || e.key === "Tab") {
         e.preventDefault();
@@ -170,20 +186,20 @@ function WithBaseFullSetup() {
       }
     }
     if (titleRef.current) {
-      listener = titleRef.current.addEventListener('keydown', preventLineBreaks);
+      titleRef.current.addEventListener('keydown', preventLineBreaks);
     }
 
     titleRef.current?.focus();
 
     return () => {
-      if (titleRef.current) titleRef.current.removeEventListener('keypress', preventLineBreaks)
+      if (titleRef.current) titleRef.current.removeEventListener('keydown', preventLineBreaks)
     }
 
   }, []);
 
   return (
     <>
-      <h1 ref={titleRef} onBlur={onTitleChange} aria-placeholder="New note title" className='text-5xl md:pl-[8rem] outline-none' contentEditable="plaintext-only">{note.Title ?? ""}</h1>
+      <h1 suppressContentEditableWarning={true} ref={titleRef} onInput={handleChangeTitle} onBlur={onTitleChange} aria-placeholder="New note title" className='text-5xl md:pl-[8rem] outline-none' contentEditable="plaintext-only">{title ?? undefined}</h1>
       <div
         className="w-full min-h-screen md:pt-[1rem] md:px-[8rem] pb-[.2rem] flex justify-center"
         ref={selectionRef}

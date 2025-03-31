@@ -1,17 +1,16 @@
 import { Sidebar, SidebarContent } from "@/components/ui/sidebar"
 import { Input } from "./ui/input"
 import { Button } from "./ui/button"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { GetNotes } from "wailsjs/go/main/App"
-import { main } from "wailsjs/go/models"
 import { useStateStore } from "@/store/store"
 
 export function AppSidebar() {
 
     const currentTab = useStateStore(state => state.currentTab);
-    const setNote = useStateStore(state => state.setNote);
     const notes = useStateStore(state => state.notes);
     const setNotes = useStateStore(state => state.setNotes);
+    const setCurrentNoteIndex = useStateStore(state => state.setCurrentNoteIndex);
 
 
     const getNotes = async () => {
@@ -19,9 +18,9 @@ export function AppSidebar() {
         setNotes(notes);
     }
 
-    const selectNote = (note: main.Note) => {
-        if (currentTab.ID === note.TabId) {
-            setNote(note)
+    const selectNote = (index: number) => {
+        if (currentTab.ID === notes[index].TabId) {
+            setCurrentNoteIndex(index);
         }
     }
 
@@ -36,8 +35,8 @@ export function AppSidebar() {
                 <Input id="filter" placeholder='Filter/create note' autoComplete="off" />
                 <div className="flex flex-col gap-2 mt-3">
                     {
-                        notes.map(note => {
-                            return <Button onClick={() => selectNote(note)} className="w-full justify-start" variant="ghost">{note.Title}</Button>
+                        notes.map((note, i) => {
+                            return <Button key={note.ID} onClick={() => selectNote(i)} className="w-full justify-start" variant="ghost">{note.Title}</Button>
                         })
                     }
                 </div>

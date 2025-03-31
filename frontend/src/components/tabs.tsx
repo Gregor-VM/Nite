@@ -12,11 +12,11 @@ import { useStateStore } from '@/store/store';
 
 function Tabs() {
 
-  const currentTab = useStateStore((state) => state.currentTab);
-  const setCurrentTab = useStateStore((state) => state.setCurrentTab);
-  const tabLoading = useStateStore((state) => state.tabLoading);
-  const setTabLoading = useStateStore((state) => state.setTabLoading);
-  const resetNote = useStateStore((state) => state.resetNote);
+  const currentTab = useStateStore(state => state.currentTab);
+  const setCurrentTab = useStateStore(state => state.setCurrentTab);
+  const tabLoading = useStateStore(state => state.tabLoading);
+  const setTabLoading = useStateStore(state => state.setTabLoading);
+  const setCurrentNoteIndex = useStateStore(state => state.setCurrentNoteIndex);
   useShortcut({ key: "e", callback: () => showEditTab(currentTab) })
   useShortcut({ key: "r", callback: () => showDeleteModal(currentTab) })
 
@@ -31,7 +31,7 @@ function Tabs() {
   }, [selected])
 
   const changeTab = (tab: main.Tab) => {
-    resetNote();
+    setCurrentNoteIndex(-1);
     setSelected(tab.ID);
     setCurrentTab(tab);
   };
