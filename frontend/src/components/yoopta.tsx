@@ -28,9 +28,8 @@ import LinkTool, { DefaultLinkToolRender } from '@yoopta/link-tool';
 
 import { FormEventHandler, useEffect, useMemo, useRef, useState } from 'react';
 import { WITH_BASIC_INIT_VALUE } from './initValue';
-import { useNoteState } from '@/hooks/note-provider';
-import { useTab } from '@/hooks/tab-provider';
 import { InsertNote, UpdateNote } from 'wailsjs/go/main/App';
+import { useStateStore } from '@/store/store';
 
 const plugins = [
   Paragraph,
@@ -118,8 +117,9 @@ const TOOLS = {
 const MARKS = [Bold, Italic, CodeMark, Underline, Strike, Highlight];
 
 function WithBaseFullSetup() {
-  const state = useNoteState();
-  const tab = useTab();
+  const note = useStateStore(state => state.note);
+  const setNote = useStateStore(state => state.setNote);
+  const currentTab = useStateStore(state => state.currentTab);
   const [value, setValue] = useState(WITH_BASIC_INIT_VALUE);
   //const [title, setTitle] = useState<string | null>(null);
   const editor = useMemo(() => createYooptaEditor(), []);
@@ -131,36 +131,34 @@ function WithBaseFullSetup() {
   };
 
   const onTitleChange: FormEventHandler<HTMLHeadingElement> = (e) => {
-    state.setTitle(e.currentTarget.textContent ?? "")
+    setNote({ ...note, Title: e.currentTarget.textContent ?? "" })
   }
 
   const editorClick = () => {
     //editor.focus()
   }
 
-  const createNewNote = async (title: string) => {
-    console.log("creating")
-    const id = await InsertNote(title, tab.currentTab.ID)
-    state.setId(id)
-    state.setTitle(title)
+  const createNewNote = async () => {
+    const id = await InsertNote(note.Title, currentTab.ID)
+    setNote({ ID: id, Title: note.Title, IsDeleted: false, TabId: currentTab.ID })
   }
 
   useEffect(() => {
-    if (state.title && state.id === 0) {
-      createNewNote(state.title)
+    if (note.Title && note.ID === 0) {
+      createNewNote()
     }
-  }, [state.title, state.id, tab.currentTab])
+  }, [note, currentTab])
 
   useEffect(() => {
-    if (state.id && state.title) {
-      UpdateNote(state.title, state.id)
+    if (note.ID && note.Title) {
+      UpdateNote(note.Title, note.ID)
     }
-  }, [state.id, state.title])
+  }, [note])
 
   useEffect(() => {
-    if (!state.title && titleRef.current) titleRef.current!.textContent = ""
+    if (!note.Title && titleRef.current) titleRef.current!.textContent = ""
     // TODO: Remove if title and content are empty
-  }, [state.title]);
+  }, [note]);
 
   useEffect(() => {
     let listener;
@@ -185,7 +183,7 @@ function WithBaseFullSetup() {
 
   return (
     <>
-      <h1 ref={titleRef} onBlur={onTitleChange} aria-placeholder="New note title" className='text-5xl md:pl-[8rem] outline-none' contentEditable="plaintext-only">{state?.title ?? ""}</h1>
+      <h1 ref={titleRef} onBlur={onTitleChange} aria-placeholder="New note title" className='text-5xl md:pl-[8rem] outline-none' contentEditable="plaintext-only">{note.Title ?? ""}</h1>
       <div
         className="w-full min-h-screen md:pt-[1rem] md:px-[8rem] pb-[.2rem] flex justify-center"
         ref={selectionRef}

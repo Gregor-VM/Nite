@@ -3,18 +3,20 @@ import { Button } from './ui/button'
 import { GetTabs } from 'wailsjs/go/main/App'
 import { main } from 'wailsjs/go/models'
 import { CreateTab } from './dialogs/create-tab';
-import { useTab } from '../hooks/tab-provider';
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from './ui/context-menu';
 import { ContextMenuShortcut } from './ui/context-menu';
 import { Plus } from 'lucide-react';
 import { DeleteTab } from './dialogs/delete-tab';
 import useShortcut from '@/hooks/useShortcut';
-import { useNoteState } from '@/hooks/note-provider';
+import { useStateStore } from '@/store/store';
 
 function Tabs() {
 
-  const { reset } = useNoteState();
-  const { currentTab, setCurrentTab, loading, setLoading } = useTab();
+  const currentTab = useStateStore((state) => state.currentTab);
+  const setCurrentTab = useStateStore((state) => state.setCurrentTab);
+  const tabLoading = useStateStore((state) => state.tabLoading);
+  const setTabLoading = useStateStore((state) => state.setTabLoading);
+  const resetNote = useStateStore((state) => state.resetNote);
   useShortcut({ key: "e", callback: () => showEditTab(currentTab) })
   useShortcut({ key: "r", callback: () => showDeleteModal(currentTab) })
 
@@ -29,14 +31,14 @@ function Tabs() {
   }, [selected])
 
   const changeTab = (tab: main.Tab) => {
-    reset();
+    resetNote();
     setSelected(tab.ID);
     setCurrentTab(tab);
   };
 
   const getTabs = async () => {
-    if (loading) return;
-    setLoading(true);
+    if (tabLoading) return;
+    setTabLoading(true);
     const res = await GetTabs();
     if (res) {
       const data = res.reverse()
@@ -46,7 +48,7 @@ function Tabs() {
       const selectedTab = data.find(tab => tab.ID === selectedId)
       if (selectedTab) setCurrentTab(selectedTab);
     }
-    setLoading(false);
+    setTabLoading(false);
   }
 
   const showCreateTab = () => {

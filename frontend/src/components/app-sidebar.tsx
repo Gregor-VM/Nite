@@ -3,15 +3,16 @@ import { Input } from "./ui/input"
 import { Button } from "./ui/button"
 import { useEffect, useState } from "react"
 import { GetNotes } from "wailsjs/go/main/App"
-import { useTab } from "@/hooks/tab-provider"
 import { main } from "wailsjs/go/models"
-import { useNoteState } from "@/hooks/note-provider"
+import { useStateStore } from "@/store/store"
 
 export function AppSidebar() {
 
-    const { currentTab } = useTab();
-    const { setId, setTitle } = useNoteState();
-    const [notes, setNotes] = useState<main.Note[]>([]);
+    const currentTab = useStateStore(state => state.currentTab);
+    const setNote = useStateStore(state => state.setNote);
+    const notes = useStateStore(state => state.notes);
+    const setNotes = useStateStore(state => state.setNotes);
+
 
     const getNotes = async () => {
         const notes = await GetNotes(currentTab.ID);
@@ -20,8 +21,7 @@ export function AppSidebar() {
 
     const selectNote = (note: main.Note) => {
         if (currentTab.ID === note.TabId) {
-            setId(note.ID);
-            setTitle(note.Title);
+            setNote(note)
         }
     }
 
