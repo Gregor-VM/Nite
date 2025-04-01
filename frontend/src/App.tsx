@@ -2,7 +2,7 @@ import './App.css';
 import { ThemeProvider } from "@/components/theme-provider"
 import { ModeToggle } from './components/mode-toggle';
 import Tabs from './components/tabs';
-import Editor from './components/yoopta';
+import Editor from './components/yoopta/yoopta';
 import Layout from './components/layout';
 
 function App() {

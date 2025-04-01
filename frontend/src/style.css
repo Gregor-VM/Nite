@@ -201,12 +201,19 @@
     }
   }
 
-  .yoo-embed-flex {
+  .yoo-embed-flex,
+  .yoo-image-flex {
     background-color: var(--popover-bg);
     color: var(--foreground) !important;
+
+    & button {
+      color: var(--foreground) !important;
+    }
   }
 
-  .yoo-embed-flex:disabled {
+  .yoo-embed-flex:disabled,
+  .yoo-image-flex:disabled {
+    color: var(--foreground) !important;
     opacity: .5;
   }
 

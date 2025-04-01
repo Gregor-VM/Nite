@@ -1,16 +1,26 @@
 package main
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
+	"errors"
 	"fmt"
+	"image"
+	_ "image/jpeg"
+	_ "image/png"
 	"log"
 	"os"
+	"path/filepath"
 )
 
 // App struct
 type App struct {
 	ctx context.Context
 }
+
+const PORT = ":5029"
+const SERVER_URL = "http://wails.localhost" + PORT
 
 // NewApp creates a new App application struct
 func NewApp() *App {
@@ -180,4 +190,66 @@ func (a *App) DeleteNote(noteId int) bool {
 	}
 
 	return true
+}
+
+func (a *App) SaveNote(tabId int, noteId int, value string) bool {
+	data := []byte(value)
+	err := a.WriteFile(fmt.Sprintf("./Nite/%d/%d.json", tabId, noteId), data)
+	return err == nil
+}
+
+func (a *App) ReadNote(tabId int, noteId int) string {
+
+	data, err := os.ReadFile(fmt.Sprintf("./Nite/%d/%d.json", tabId, noteId))
+	if err != nil {
+		return "{}"
+	}
+	return string(data)
+}
+
+func (a *App) DecodeData(data string) ([]byte, error) {
+	var file []byte
+	if err := json.Unmarshal([]byte(data), &file); err != nil {
+		fmt.Println("Could not unmarshal the file data")
+		return []byte{}, errors.New("could not unmarshal th file data")
+	}
+	return file, nil
+}
+
+func (a *App) SaveFile(fileData string, filename string) string {
+	file, err := a.DecodeData(fileData)
+	if err != nil {
+		return ""
+	}
+	savePath := fmt.Sprintf("./Nite/assets/%s", filename)
+	err = a.WriteFile(savePath, file)
+	if err != nil {
+		return ""
+	}
+	return fmt.Sprintf("%s/assets/%s", SERVER_URL, filename)
+}
+
+func (a *App) WriteFile(path string, file []byte) error {
+	if err := os.MkdirAll(filepath.Join(path, ".."), 0755); err != nil {
+		return err
+	}
+	if err := os.WriteFile(path, file, 0644); err != nil {
+		fmt.Println("Error writing the file: ", path)
+		return err
+	}
+	return nil
+}
+
+func (a *App) ImageSize(fileData string, filename string) []int {
+	file, err := a.DecodeData(fileData)
+	if err != nil {
+		fmt.Println("Error deconding data while getting image size")
+	}
+	r := bytes.NewReader(file)
+	m, _, err := image.Decode(r)
+	if err != nil {
+		fmt.Println("Error while decoding the image: ", filename)
+	}
+	bounds := m.Bounds()
+	return []int{bounds.Dx(), bounds.Dy()}
 }

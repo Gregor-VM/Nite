@@ -43,7 +43,7 @@ function Tabs() {
     if (res) {
       const data = res.reverse()
       setTabs(data);
-      const selectedId = selected ? data.find((tab => tab.ID === selected))?.ID : data[0].ID
+      const selectedId = selected ? data.find((tab => tab?.ID === selected))?.ID : data[0].ID
       setSelected(selectedId);
       const selectedTab = data.find(tab => tab.ID === selectedId)
       if (selectedTab) setCurrentTab(selectedTab);

@@ -7,114 +7,16 @@ import YooptaEditor, {
   YooptaOnChangeOptions,
 } from '@yoopta/editor';
 
-import Paragraph from '@yoopta/paragraph';
-import Blockquote from '@yoopta/blockquote';
-import Embed from '@yoopta/embed';
-import Image from '@yoopta/image';
-import Link from '@yoopta/link';
-import Callout from '@yoopta/callout';
-import Video from '@yoopta/video';
-import File from '@yoopta/file';
-import Accordion from '@yoopta/accordion';
-import { NumberedList, BulletedList, TodoList } from '@yoopta/lists';
-import { Bold, Italic, CodeMark, Underline, Strike, Highlight } from '@yoopta/marks';
-import { HeadingOne, HeadingThree, HeadingTwo } from '@yoopta/headings';
-import Code from '@yoopta/code';
-import Table from '@yoopta/table';
-import Divider from '@yoopta/divider';
-import ActionMenuList, { DefaultActionMenuRender } from '@yoopta/action-menu-list';
-import Toolbar, { DefaultToolbarRender } from '@yoopta/toolbar';
-import LinkTool, { DefaultLinkToolRender } from '@yoopta/link-tool';
-
 import { FormEventHandler, useEffect, useMemo, useRef, useState } from 'react';
-import { WITH_BASIC_INIT_VALUE } from './initValue';
-import { InsertNote, UpdateNote } from 'wailsjs/go/main/App';
+import { WITH_BASIC_INIT_VALUE } from '../initValue';
+import { InsertNote, ReadNote, SaveNote, UpdateNote } from 'wailsjs/go/main/App';
 import { useStateStore } from '@/store/store';
+import useDebounce from '@/hooks/use-debounce';
+import { HistoryStack, HistoryStackName } from '@yoopta/editor/dist/editor/core/history';
+import { MARKS, plugins, TOOLS } from './data';
+import { scanEditorImages } from '@/lib/scanImage';
 
-const plugins = [
-  Paragraph,
-  Table,
-  Divider.extend({
-    elementProps: {
-      divider: (props) => ({
-        ...props,
-        color: '#007aff',
-      }),
-    },
-  }),
-  Accordion,
-  HeadingOne,
-  HeadingTwo,
-  HeadingThree,
-  Blockquote,
-  Callout,
-  NumberedList,
-  BulletedList,
-  TodoList,
-  Code,
-  Link,
-  Embed,
-  /*Image.extend({
-    options: {
-      async onUpload(file) {
-        const data = await uploadToCloudinary(file, 'image');
 
-        return {
-          src: data.secure_url,
-          alt: 'cloudinary',
-          sizes: {
-            width: data.width,
-            height: data.height,
-          },
-        };
-      },
-    },
-  }),*/
-  /*Video.extend({
-    options: {
-      onUpload: async (file) => {
-        const data = await uploadToCloudinary(file, 'video');
-        return {
-          src: data.secure_url,
-          alt: 'cloudinary',
-          sizes: {
-            width: data.width,
-            height: data.height,
-          },
-        };
-      },
-      onUploadPoster: async (file) => {
-        const image = await uploadToCloudinary(file, 'image');
-        return image.secure_url;
-      },
-    },
-  }),*/
-  /*File.extend({
-    options: {
-      onUpload: async (file) => {
-        const response = await uploadToCloudinary(file, 'auto');
-        return { src: response.secure_url, format: response.format, name: response.name, size: response.bytes };
-      },
-    },
-  }),*/
-];
-
-const TOOLS = {
-  ActionMenu: {
-    render: DefaultActionMenuRender,
-    tool: ActionMenuList,
-  },
-  Toolbar: {
-    render: DefaultToolbarRender,
-    tool: Toolbar,
-  },
-  LinkTool: {
-    render: DefaultLinkToolRender,
-    tool: LinkTool,
-  },
-};
-
-const MARKS = [Bold, Italic, CodeMark, Underline, Strike, Highlight];
 
 function WithBaseFullSetup() {
   const currentNoteIndex = useStateStore(state => state.currentNoteIndex);
@@ -124,9 +26,13 @@ function WithBaseFullSetup() {
   const setNotes = useStateStore(state => state.setNotes);
   const currentTab = useStateStore(state => state.currentTab);
   const [value, setValue] = useState(WITH_BASIC_INIT_VALUE);
+  const [prevImages, setPrevImages] = useState<string[]>([]);
+
   const editor = useMemo(() => createYooptaEditor(), []);
   const selectionRef = useRef(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
+
+  const debouncedValue = useDebounce(value, 1000);
 
   const [title, setTitle] = useState("");
 
@@ -137,7 +43,7 @@ function WithBaseFullSetup() {
   const handleChangeTitle = () => {
     const value = titleRef.current?.textContent ?? "";
     if (!note) {
-      createNewNote();
+      createNewNote(value);
     }
     if (currentNoteIndex === -1) return;
 
@@ -157,11 +63,52 @@ function WithBaseFullSetup() {
     //editor.focus()
   }
 
-  const createNewNote = async () => {
-    const id = await InsertNote(note?.Title ?? "", currentTab.ID)
-    const newNote = { ID: id, Title: note?.Title ?? "", IsDeleted: false, TabId: currentTab.ID };
+  const onBeforeNewEditorFile = () => {
+    if (prevImages.length === 0) return;
+    const editorObject = editor.getEditorValue()
+    const currentImages = scanEditorImages(editorObject);
+    for (const image of prevImages) {
+      if (!currentImages.includes(image)) {
+        console.log(image)
+        // Delete this image
+      }
+    }
+  }
+
+  const onAfterNewEditorFile = () => {
+    resetHistory();
+    setPrevImages(scanEditorImages(editor.getEditorValue()));
+  }
+
+  const resetHistory = () => {
+    const initialValue: Record<HistoryStackName, HistoryStack[]> = {
+      redos: [],
+      undos: []
+    }
+    editor.historyStack = initialValue
+  }
+
+  const createNewNote = async (title: string) => {
+    const id = await InsertNote(title, currentTab.ID)
+    const newNote = { ID: id, Title: "", IsDeleted: false, TabId: currentTab.ID };
+    const newNoteTitledChanged = { ID: id, Title: title, IsDeleted: false, TabId: currentTab.ID };
     setNotes([newNote, ...notes]);
+    setTimeout(() => setNotes([newNoteTitledChanged, ...notes]), 0);
     setCurrentNoteIndex(0);
+  }
+
+
+  const saveFile = (noteId: number, editorValue: YooptaContentValue) => {
+    SaveNote(currentTab.ID, noteId, JSON.stringify(editorValue))
+  }
+
+  const readFile = async () => {
+    const editorValue = await ReadNote(currentTab.ID, note.ID);
+    const parsedValue: YooptaContentValue = JSON.parse(editorValue);
+    onBeforeNewEditorFile();
+    editor.setEditorValue(parsedValue);
+    editor.focus();
+    onAfterNewEditorFile();
   }
 
 
@@ -171,11 +118,20 @@ function WithBaseFullSetup() {
     }
   }, [note?.Title])
 
+  // on note change
   useEffect(() => {
     if (note && note?.Title) {
       setTitle(note.Title);
+      readFile()
     }
   }, [note?.ID])
+
+  // reset value when tab changes
+  useEffect(() => {
+    setTitle("");
+    editor.setEditorValue({});
+    onAfterNewEditorFile();
+  }, [currentTab.ID])
 
   useEffect(() => {
     const preventLineBreaks = (e: KeyboardEvent) => {
@@ -196,6 +152,10 @@ function WithBaseFullSetup() {
     }
 
   }, []);
+
+  useEffect(() => {
+    if (note?.ID) saveFile(note.ID, value);
+  }, [debouncedValue]);
 
   return (
     <>

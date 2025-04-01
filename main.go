@@ -14,6 +14,7 @@ var assets embed.FS
 func main() {
 
 	initDB()
+	go ServeStaticFiles()
 	defer db.Close()
 
 	// Create an instance of the app structure
