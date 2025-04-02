@@ -135,14 +135,6 @@
   pointer-events: none;
 }
 
-[contenteditable="plaintext-only"]:empty:before {
-  content: attr(aria-placeholder);
-  opacity: .5;
-  pointer-events: none;
-  display: block;
-  /* For Firefox */
-}
-
 .dark {
   ::selection {
     background: #004aa1;

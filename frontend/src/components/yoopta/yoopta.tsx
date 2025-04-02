@@ -30,18 +30,20 @@ function WithBaseFullSetup() {
 
   const editor = useMemo(() => createYooptaEditor(), []);
   const selectionRef = useRef(null);
-  const titleRef = useRef<HTMLHeadingElement>(null);
 
   const debouncedValue = useDebounce(value, 1000);
 
   const [title, setTitle] = useState("");
+  const titleRef = useRef<HTMLTextAreaElement>(null);
 
   const onChange = (newValue: YooptaContentValue, options: YooptaOnChangeOptions) => {
     setValue(newValue);
   };
 
-  const handleChangeTitle = () => {
-    const value = titleRef.current?.textContent ?? "";
+  const onTitleChange: React.ChangeEventHandler<HTMLTextAreaElement> = async (e) => {
+    const value = e.target.value ?? "";
+    if (value) setTitle(value)
+
     if (!note) {
       createNewNote(value);
     }
@@ -50,13 +52,7 @@ function WithBaseFullSetup() {
     const notesCopy = [...notes];
     notesCopy[currentNoteIndex].Title = value;
     setNotes(notesCopy);
-    // make sure to show the placeholder
-    if (value === "" && titleRef.current) titleRef.current!.textContent = ""
-  }
-
-  const onTitleChange: FormEventHandler<HTMLHeadingElement> = async (e) => {
-    const value = e.currentTarget.textContent ?? "";
-    if (value) setTitle(value)
+    setTitle(value);
   }
 
   const editorClick = () => {
@@ -159,7 +155,8 @@ function WithBaseFullSetup() {
 
   return (
     <>
-      <h1 suppressContentEditableWarning={true} ref={titleRef} onInput={handleChangeTitle} onBlur={onTitleChange} aria-placeholder="New note title" className='text-5xl md:pl-[8rem] outline-none' contentEditable="plaintext-only">{title ?? undefined}</h1>
+      {/*<h1 suppressContentEditableWarning={true} ref={titleRef} onInput={handleChangeTitle} onBlur={onTitleChange} aria-placeholder="New note title" className='text-5xl md:pl-[8rem] outline-none' contentEditable="plaintext-only">{title ?? undefined}</h1>*/}
+      <textarea ref={titleRef} value={title} onChange={onTitleChange} placeholder='New note title' className='text-5xl md:pl-[8rem] outline-none w-11/12 h-14 resize-none overflow-hidden'></textarea>
       <div
         className="w-full min-h-screen md:pt-[1rem] md:px-[8rem] pb-[.2rem] flex justify-center"
         ref={selectionRef}
