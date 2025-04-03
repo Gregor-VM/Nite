@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Button } from './ui/button'
-import { GetTabs } from 'wailsjs/go/main/App'
+import { CheckForZombieAssets, GetTabs } from 'wailsjs/go/main/App'
 import { main } from 'wailsjs/go/models'
 import { CreateTab } from './dialogs/create-tab';
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from './ui/context-menu';
@@ -12,9 +12,11 @@ import { useStateStore } from '@/store/store';
 
 function Tabs() {
 
+  const notes = useStateStore(state => state.notes);
   const currentTab = useStateStore(state => state.currentTab);
   const setCurrentTab = useStateStore(state => state.setCurrentTab);
   const tabLoading = useStateStore(state => state.tabLoading);
+  const currentNoteIndex = useStateStore(state => state.currentNoteIndex);
   const setTabLoading = useStateStore(state => state.setTabLoading);
   const setCurrentNoteIndex = useStateStore(state => state.setCurrentNoteIndex);
   useShortcut({ key: "e", callback: () => showEditTab(currentTab) })
@@ -31,6 +33,7 @@ function Tabs() {
   }, [selected])
 
   const changeTab = (tab: main.Tab) => {
+    CheckForZombieAssets(currentTab?.ID, notes[currentNoteIndex]?.ID)
     setCurrentNoteIndex(-1);
     setSelected(tab.ID);
     setCurrentTab(tab);

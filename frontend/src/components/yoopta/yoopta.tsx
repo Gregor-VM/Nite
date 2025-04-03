@@ -7,15 +7,13 @@ import YooptaEditor, {
   YooptaOnChangeOptions,
 } from '@yoopta/editor';
 
-import { FormEventHandler, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { WITH_BASIC_INIT_VALUE } from '../initValue';
 import { InsertNote, ReadNote, SaveNote, UpdateNote } from 'wailsjs/go/main/App';
 import { useStateStore } from '@/store/store';
 import useDebounce from '@/hooks/use-debounce';
 import { HistoryStack, HistoryStackName } from '@yoopta/editor/dist/editor/core/history';
 import { MARKS, plugins, TOOLS } from './data';
-import { scanEditorImages } from '@/lib/scanImage';
-
 
 
 function WithBaseFullSetup() {
@@ -26,7 +24,6 @@ function WithBaseFullSetup() {
   const setNotes = useStateStore(state => state.setNotes);
   const currentTab = useStateStore(state => state.currentTab);
   const [value, setValue] = useState(WITH_BASIC_INIT_VALUE);
-  const [prevImages, setPrevImages] = useState<string[]>([]);
 
   const editor = useMemo(() => createYooptaEditor(), []);
   const selectionRef = useRef(null);
@@ -59,21 +56,8 @@ function WithBaseFullSetup() {
     //editor.focus()
   }
 
-  const onBeforeNewEditorFile = () => {
-    if (prevImages.length === 0) return;
-    const editorObject = editor.getEditorValue()
-    const currentImages = scanEditorImages(editorObject);
-    for (const image of prevImages) {
-      if (!currentImages.includes(image)) {
-        console.log(image)
-        // Delete this image
-      }
-    }
-  }
-
   const onAfterNewEditorFile = () => {
     resetHistory();
-    setPrevImages(scanEditorImages(editor.getEditorValue()));
   }
 
   const resetHistory = () => {
@@ -91,6 +75,7 @@ function WithBaseFullSetup() {
     setNotes([newNote, ...notes]);
     setTimeout(() => setNotes([newNoteTitledChanged, ...notes]), 0);
     setCurrentNoteIndex(0);
+    window.sessionStorage.setItem("noteId", String(id));
   }
 
 
@@ -101,7 +86,6 @@ function WithBaseFullSetup() {
   const readFile = async () => {
     const editorValue = await ReadNote(currentTab.ID, note.ID);
     const parsedValue: YooptaContentValue = JSON.parse(editorValue);
-    onBeforeNewEditorFile();
     editor.setEditorValue(parsedValue);
     editor.focus();
     onAfterNewEditorFile();
@@ -119,6 +103,7 @@ function WithBaseFullSetup() {
     if (note && note?.Title) {
       setTitle(note.Title);
       readFile()
+      window.sessionStorage.setItem("noteId", String(note?.ID));
     }
   }, [note?.ID])
 
@@ -127,6 +112,7 @@ function WithBaseFullSetup() {
     setTitle("");
     editor.setEditorValue({});
     onAfterNewEditorFile();
+    window.sessionStorage.setItem("tabId", String(currentTab?.ID));
   }, [currentTab.ID])
 
   useEffect(() => {
@@ -155,7 +141,6 @@ function WithBaseFullSetup() {
 
   return (
     <>
-      {/*<h1 suppressContentEditableWarning={true} ref={titleRef} onInput={handleChangeTitle} onBlur={onTitleChange} aria-placeholder="New note title" className='text-5xl md:pl-[8rem] outline-none' contentEditable="plaintext-only">{title ?? undefined}</h1>*/}
       <textarea ref={titleRef} value={title} onChange={onTitleChange} placeholder='New note title' className='text-5xl md:pl-[8rem] outline-none w-11/12 h-14 resize-none overflow-hidden'></textarea>
       <div
         className="w-full min-h-screen md:pt-[1rem] md:px-[8rem] pb-[.2rem] flex justify-center"

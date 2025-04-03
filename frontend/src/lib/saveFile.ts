@@ -8,8 +8,10 @@ export const saveFile = async (file: File, type: FileType) => {
     //const data = u.toString();
     const data = JSON.stringify(Array.from(u))
     const filename = Date.now() + "_" + file.name;
-    const url = await SaveFile(data, filename);
-    const [width, height] = await ImageSize(data, filename);
+    const tabId = parseInt(window.sessionStorage.getItem("tabId") || "");
+    const noteId = parseInt(window.sessionStorage.getItem("noteId") || "");
+    const url = await SaveFile(data, tabId, noteId, filename);
+    const [width, height] = await ImageSize(data);
 
     switch (type) {
         case "image":

@@ -2,13 +2,14 @@ import { Sidebar, SidebarContent } from "@/components/ui/sidebar"
 import { Input } from "./ui/input"
 import { Button } from "./ui/button"
 import { useEffect } from "react"
-import { GetNotes } from "wailsjs/go/main/App"
+import { CheckForZombieAssets, GetNotes } from "wailsjs/go/main/App"
 import { useStateStore } from "@/store/store"
 
 export function AppSidebar() {
 
     const currentTab = useStateStore(state => state.currentTab);
     const notes = useStateStore(state => state.notes);
+    const currentNoteIndex = useStateStore(state => state.currentNoteIndex);
     const setNotes = useStateStore(state => state.setNotes);
     const setCurrentNoteIndex = useStateStore(state => state.setCurrentNoteIndex);
 
@@ -19,6 +20,7 @@ export function AppSidebar() {
     }
 
     const selectNote = (index: number) => {
+        CheckForZombieAssets(currentTab?.ID, notes[currentNoteIndex]?.ID)
         if (currentTab.ID === notes[index].TabId) {
             setCurrentNoteIndex(index);
         }

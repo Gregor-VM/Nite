@@ -12,6 +12,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 // App struct
@@ -194,13 +195,13 @@ func (a *App) DeleteNote(noteId int) bool {
 
 func (a *App) SaveNote(tabId int, noteId int, value string) bool {
 	data := []byte(value)
-	err := a.WriteFile(fmt.Sprintf("./Nite/%d/%d.json", tabId, noteId), data)
+	err := a.WriteFile(fmt.Sprintf("./Nite/%d/%d/data.json", tabId, noteId), data)
 	return err == nil
 }
 
 func (a *App) ReadNote(tabId int, noteId int) string {
 
-	data, err := os.ReadFile(fmt.Sprintf("./Nite/%d/%d.json", tabId, noteId))
+	data, err := os.ReadFile(fmt.Sprintf("./Nite/%d/%d/data.json", tabId, noteId))
 	if err != nil {
 		return "{}"
 	}
@@ -216,17 +217,17 @@ func (a *App) DecodeData(data string) ([]byte, error) {
 	return file, nil
 }
 
-func (a *App) SaveFile(fileData string, filename string) string {
+func (a *App) SaveFile(fileData string, tabId int, noteId int, filename string) string {
 	file, err := a.DecodeData(fileData)
 	if err != nil {
 		return ""
 	}
-	savePath := fmt.Sprintf("./Nite/assets/%s", filename)
+	savePath := fmt.Sprintf("./Nite/%d/%d/assets/%s", tabId, noteId, filename)
 	err = a.WriteFile(savePath, file)
 	if err != nil {
 		return ""
 	}
-	return fmt.Sprintf("%s/assets/%s", SERVER_URL, filename)
+	return fmt.Sprintf("%s/%d/%d/assets/%s", SERVER_URL, tabId, noteId, filename)
 }
 
 func (a *App) WriteFile(path string, file []byte) error {
@@ -240,7 +241,19 @@ func (a *App) WriteFile(path string, file []byte) error {
 	return nil
 }
 
-func (a *App) ImageSize(fileData string, filename string) []int {
+func (a *App) RemoveFile(path string) error {
+	if !strings.Contains(path, "Nite") {
+		fmt.Println(path)
+		panic("Invalid remove file path received")
+	}
+	if err := os.Remove(path); err != nil {
+		fmt.Println("Error while deleting the file: ", path)
+		return err
+	}
+	return nil
+}
+
+func (a *App) ImageSize(fileData string) []int {
 	file, err := a.DecodeData(fileData)
 	if err != nil {
 		fmt.Println("Error deconding data while getting image size")
@@ -248,8 +261,58 @@ func (a *App) ImageSize(fileData string, filename string) []int {
 	r := bytes.NewReader(file)
 	m, _, err := image.Decode(r)
 	if err != nil {
-		fmt.Println("Error while decoding the image: ", filename)
+		fmt.Println("Error while decoding the image")
 	}
 	bounds := m.Bounds()
 	return []int{bounds.Dx(), bounds.Dy()}
+}
+
+func (a *App) CheckForZombieAssets(tabId int, noteId int) {
+	dir := fmt.Sprintf("./Nite/%d/%d/assets", tabId, noteId)
+	files := make([]string, 0)
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		fmt.Println("Error while reading the directory: ", dir)
+		return
+	}
+	for _, entry := range entries {
+		if !entry.IsDir() {
+			files = append(files, entry.Name())
+		}
+	}
+
+	fmt.Println(files)
+
+	fileSet := make(map[string]bool, 0)
+	var blocks map[string]Block
+	filePath := fmt.Sprintf("./Nite/%d/%d/%s", tabId, noteId, "data.json")
+	var bytes []byte
+	bytes, err = os.ReadFile(filePath)
+	if err != nil {
+		fmt.Println("Error reading the file: ", filePath)
+		return
+	}
+
+	err = json.Unmarshal(bytes, &blocks)
+	if err != nil {
+		fmt.Println("Error while decoding json file: ", filePath)
+	}
+
+	for _, block := range blocks {
+		if block.Type == "Image" && block.Value[0].Type == "image" {
+			imageUrl := strings.Split(block.Value[0].Props.Src, "/")
+			imageKey := imageUrl[len(imageUrl)-1]
+			fileSet[imageKey] = true
+		}
+	}
+
+	fmt.Println(fileSet)
+
+	for _, file := range files {
+		if !fileSet[file] {
+			fileToDelete := fmt.Sprintf("%s/%s", dir, file)
+			a.RemoveFile(fileToDelete)
+		}
+	}
+
 }
