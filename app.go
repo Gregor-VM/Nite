@@ -281,8 +281,6 @@ func (a *App) CheckForZombieAssets(tabId int, noteId int) {
 		}
 	}
 
-	fmt.Println(files)
-
 	fileSet := make(map[string]bool, 0)
 	var blocks map[string]Block
 	filePath := fmt.Sprintf("./Nite/%d/%d/%s", tabId, noteId, "data.json")
@@ -300,13 +298,24 @@ func (a *App) CheckForZombieAssets(tabId int, noteId int) {
 
 	for _, block := range blocks {
 		if block.Type == "Image" && block.Value[0].Type == "image" {
+			// images
 			imageUrl := strings.Split(block.Value[0].Props.Src, "/")
-			imageKey := imageUrl[len(imageUrl)-1]
-			fileSet[imageKey] = true
+			fileKey := imageUrl[len(imageUrl)-1]
+			fileSet[fileKey] = true
+		}
+
+		if block.Type == "Video" && block.Value[0].Type == "video" {
+			// images
+			videoUrl := strings.Split(block.Value[0].Props.Src, "/")
+			fileKey := videoUrl[len(videoUrl)-1]
+			fileSet[fileKey] = true
+
+			//poster
+			posterUrl := strings.Split(block.Value[0].Props.Poster, "/")
+			fileKey = posterUrl[len(posterUrl)-1]
+			fileSet[fileKey] = true
 		}
 	}
-
-	fmt.Println(fileSet)
 
 	for _, file := range files {
 		if !fileSet[file] {

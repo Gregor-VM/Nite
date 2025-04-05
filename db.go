@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"log"
+	"os"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -22,8 +23,13 @@ type Note struct {
 var db *sql.DB
 
 func initDB() {
+
+	if err := os.MkdirAll("./Nite", 0755); err != nil {
+		log.Fatal(err)
+	}
+
 	var err error
-	db, err = sql.Open("sqlite3", "./nite.db")
+	db, err = sql.Open("sqlite3", "./Nite/nite.db")
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -38,7 +38,11 @@ export function AppSidebar() {
                 <div className="flex flex-col gap-2 mt-3">
                     {
                         notes.map((note, i) => {
-                            return <Button key={note.ID} onClick={() => selectNote(i)} className="w-full justify-start" variant="ghost">{note.Title}</Button>
+                            return <Button title={note.Title} key={note.ID} onClick={() => selectNote(i)} className="w-full justify-start" variant="ghost">
+                                <span className="text-ellipsis overflow-hidden whitespace-nowrap">
+                                    {note.Title}
+                                </span>
+                            </Button>
                         })
                     }
                 </div>

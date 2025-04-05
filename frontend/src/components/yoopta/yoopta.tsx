@@ -14,6 +14,7 @@ import { useStateStore } from '@/store/store';
 import useDebounce from '@/hooks/use-debounce';
 import { HistoryStack, HistoryStackName } from '@yoopta/editor/dist/editor/core/history';
 import { MARKS, plugins, TOOLS } from './data';
+import useAutosize from '@/hooks/use-autoResize';
 
 
 function WithBaseFullSetup() {
@@ -24,14 +25,14 @@ function WithBaseFullSetup() {
   const setNotes = useStateStore(state => state.setNotes);
   const currentTab = useStateStore(state => state.currentTab);
   const [value, setValue] = useState(WITH_BASIC_INIT_VALUE);
+  const [title, setTitle] = useState("");
 
   const editor = useMemo(() => createYooptaEditor(), []);
   const selectionRef = useRef(null);
+  const titleRef = useRef<HTMLTextAreaElement>(null);
 
   const debouncedValue = useDebounce(value, 1000);
-
-  const [title, setTitle] = useState("");
-  const titleRef = useRef<HTMLTextAreaElement>(null);
+  useAutosize(titleRef.current, title);
 
   const onChange = (newValue: YooptaContentValue, options: YooptaOnChangeOptions) => {
     setValue(newValue);
@@ -141,9 +142,9 @@ function WithBaseFullSetup() {
 
   return (
     <>
-      <textarea ref={titleRef} value={title} onChange={onTitleChange} placeholder='New note title' className='text-5xl md:pl-[8rem] outline-none w-11/12 h-14 resize-none overflow-hidden'></textarea>
+      <textarea ref={titleRef} value={title} onChange={onTitleChange} placeholder='New note title' className='text-5xl leading-tight md:pl-[8rem] outline-none w-11/12 h-14 resize-none overflow-hidden'></textarea>
       <div
-        className="w-full min-h-screen md:pt-[1rem] md:px-[8rem] pb-[.2rem] flex justify-center"
+        className="w-full min-h-screen pt-0 md:px-[8rem] pb-[.2rem] flex justify-center"
         ref={selectionRef}
         onClick={editorClick}
       >

@@ -20,79 +20,74 @@ import LinkTool, { DefaultLinkToolRender } from '@yoopta/link-tool';
 import { saveFile } from '@/lib/saveFile';
 
 const plugins = [
-    Paragraph,
-    Table,
-    Divider.extend({
-        elementProps: {
-            divider: (props) => ({
-                ...props,
-                color: '#525252',
-            }),
-        },
-    }),
-    Accordion,
-    HeadingOne,
-    HeadingTwo,
-    HeadingThree,
-    Blockquote,
-    Callout,
-    NumberedList,
-    BulletedList,
-    TodoList,
-    Code,
-    Link,
-    Embed,
-    Image.extend({
-        options: {
-            async onUpload(file) {
-                const data = await saveFile(file, 'image');
+  Paragraph,
+  Table,
+  Divider.extend({
+    elementProps: {
+      divider: (props) => ({
+        ...props,
+        color: '#525252',
+      }),
+    },
+  }),
+  Accordion,
+  HeadingOne,
+  HeadingTwo,
+  HeadingThree,
+  Blockquote,
+  Callout,
+  NumberedList,
+  BulletedList,
+  TodoList,
+  Code,
+  Link,
+  Embed,
+  Image.extend({
+    options: {
+      async onUpload(file) {
+        const data = await saveFile(file, 'image');
 
-                return data;
-            },
-        },
-    }),
-    /*Video.extend({
-      options: {
-        onUpload: async (file) => {
-          const data = await uploadToCloudinary(file, 'video');
-          return {
-            src: data.secure_url,
-            alt: 'cloudinary',
-            sizes: {
-              width: data.width,
-              height: data.height,
-            },
-          };
-        },
-        onUploadPoster: async (file) => {
-          const image = await uploadToCloudinary(file, 'image');
-          return image.secure_url;
-        },
+        return data;
       },
-    }),*/
-    /*File.extend({
-      options: {
-        onUpload: async (file) => {
-          const response = await uploadToCloudinary(file, 'auto');
-          return { src: response.secure_url, format: response.format, name: response.name, size: response.bytes };
-        },
+    },
+  }),
+  Video.extend({
+    options: {
+      onUpload: async (file) => {
+        const data = await saveFile(file, 'video');
+        return data;
       },
-    }),*/
+      onUploadPoster: async (file) => {
+        const data = await saveFile(file, 'image');
+        return data.src;
+      },
+    },
+  }),
+  File.extend({
+    options: {
+      onUpload: async (file) => {
+        const data = await saveFile(file, 'auto');
+        return data;
+        /*const response = await uploadToCloudinary(file, 'auto');
+        return { src: response.secure_url, format: response.format, name: response.name, size: response.bytes };*/
+      },
+    },
+  }),
 ];
 
 const TOOLS = {
-    ActionMenu: {
-        render: DefaultActionMenuRender,
-        tool: ActionMenuList,
-    },
-    Toolbar: {
-        render: DefaultToolbarRender,
-        tool: Toolbar,
-    },
-    LinkTool: {
-        render: DefaultLinkToolRender,
-        tool: LinkTool,
-    },
+  ActionMenu: {
+    render: DefaultActionMenuRender,
+    tool: ActionMenuList,
+  },
+  Toolbar: {
+    render: DefaultToolbarRender,
+    tool: Toolbar,
+  },
+  LinkTool: {
+    render: DefaultLinkToolRender,
+    tool: LinkTool,
+  },
 };
 
 const MARKS = [Bold, Italic, CodeMark, Underline, Strike, Highlight];

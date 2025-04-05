@@ -8,10 +8,15 @@ export const saveFile = async (file: File, type: FileType) => {
     //const data = u.toString();
     const data = JSON.stringify(Array.from(u))
     const filename = Date.now() + "_" + file.name;
+    const extension = filename.split(".")[filename.split(".").length - 1];
     const tabId = parseInt(window.sessionStorage.getItem("tabId") || "");
     const noteId = parseInt(window.sessionStorage.getItem("noteId") || "");
     const url = await SaveFile(data, tabId, noteId, filename);
-    const [width, height] = await ImageSize(data);
+    let width: number = 0;
+    let height: number = 0;
+    if (type === "image") {
+        [width, height] = await ImageSize(data);
+    }
 
     switch (type) {
         case "image":
@@ -24,6 +29,7 @@ export const saveFile = async (file: File, type: FileType) => {
                 },
             })
         case "video":
+            return ({ src: url, format: extension, name: file.name, size: file.size })
             return ({
                 src: url,
                 alt: 'local',
