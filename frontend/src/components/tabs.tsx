@@ -8,7 +8,7 @@ import { ContextMenuShortcut } from './ui/context-menu';
 import { Plus } from 'lucide-react';
 import { DeleteTab } from './dialogs/delete-tab';
 import useShortcut from '@/hooks/useShortcut';
-import { useStateStore } from '@/store/store';
+import { tabInitialState, useStateStore } from '@/store/store';
 
 function Tabs() {
 
@@ -42,7 +42,12 @@ function Tabs() {
   const getTabs = async () => {
     if (tabLoading) return;
     setTabLoading(true);
-    const res = await GetTabs();
+    let res = await GetTabs();
+
+    // if not response is given assume this is the first time
+    // and the database is still being created
+    if (res.length === 0) res = [tabInitialState];
+
     if (res) {
       const data = res.reverse()
       setTabs(data);
@@ -74,33 +79,35 @@ function Tabs() {
   }, []);
 
   return (
-    <nav className="flex gap-2">
-      {tabs.map(tab => {
-        return (
-          <ContextMenu key={tab.ID}>
-            <ContextMenuTrigger>
-              <Button
-                onClick={() => changeTab(tab)}
-                variant={getButtonVariant(tab.ID)}
-              >{tab.Title}</Button>
-            </ContextMenuTrigger>
-            <ContextMenuContent className="w-36">
-              <ContextMenuItem onClick={() => showEditTab(tab)}>
-                Edit
-                <ContextMenuShortcut>⌘ + E</ContextMenuShortcut>
-              </ContextMenuItem>
-              <ContextMenuItem onClick={() => showDeleteModal(tab)} disabled={tab.ID === 1} variant='destructive'>
-                Delete
-                <ContextMenuShortcut>⌘ + D</ContextMenuShortcut>
-              </ContextMenuItem>
-            </ContextMenuContent>
-          </ContextMenu>
-        );
-      })}
+    <>
+      <nav className="flex gap-2 tabs overflow-x-auto hide-scrollbar">
+        {tabs.map(tab => {
+          return (
+            <ContextMenu key={tab.ID}>
+              <ContextMenuTrigger>
+                <Button
+                  onClick={() => changeTab(tab)}
+                  variant={getButtonVariant(tab.ID)}
+                >{tab.Title}</Button>
+              </ContextMenuTrigger>
+              <ContextMenuContent className="w-36">
+                <ContextMenuItem onClick={() => showEditTab(tab)}>
+                  Edit
+                  <ContextMenuShortcut>⌘ + E</ContextMenuShortcut>
+                </ContextMenuItem>
+                <ContextMenuItem onClick={() => showDeleteModal(tab)} disabled={tab.ID === 1} variant='destructive'>
+                  Delete
+                  <ContextMenuShortcut>⌘ + D</ContextMenuShortcut>
+                </ContextMenuItem>
+              </ContextMenuContent>
+            </ContextMenu>
+          );
+        })}
+        <CreateTab tabToEdit={editTab} open={openModal} setOpen={setOpenModal} updateTabs={getTabs} />
+        <DeleteTab updateTabs={getTabs} tabToEdit={editTab} open={openDeleteModal} setOpen={setOpenDeleteModal} />
+      </nav>
       <Button onClick={showCreateTab} variant="ghost"><Plus /></Button>
-      <CreateTab tabToEdit={editTab} open={openModal} setOpen={setOpenModal} updateTabs={getTabs} />
-      <DeleteTab updateTabs={getTabs} tabToEdit={editTab} open={openDeleteModal} setOpen={setOpenDeleteModal} />
-    </nav>
+    </>
   )
 }
 

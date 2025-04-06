@@ -193,6 +193,15 @@
     }
   }
 
+  .yoopta-link-preview {
+    background-color: var(--popover-bg);
+    color: var(--foreground) !important;
+
+    button:hover {
+      background-color: var(--selection-bg);
+    }
+  }
+
   .yoo-embed-flex,
   .yoo-image-flex,
   .yoo-video-flex,
@@ -286,6 +295,58 @@
 
 .yoopta-editor .yoopta-callout-options {
   color: var(--foreground);
+}
+
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+::-webkit-scrollbar {
+  width: .35rem;
+  height: .35rem;
+}
+
+::-webkit-scrollbar-track {
+  background: #d9dfe7
+}
+
+::-webkit-scrollbar-thumb {
+  background: #bac7d9
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #b4d1f4
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #272727
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #373737
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #474747
+}
+
+
+.tabs {
+  --shadow-color: rgba(40, 40, 40, .4);
+  --width: 20px;
+  background-image:
+    linear-gradient(to right, var(--background), var(--background)),
+    linear-gradient(to right, var(--background), var(--background)),
+    linear-gradient(to right, var(--shadow-color), rgba(255, 255, 255, 0)),
+    linear-gradient(to left, var(--shadow-color), rgba(255, 255, 255, 0));
+
+  background-position: left center, right center, left center, right center;
+  background-repeat: no-repeat;
+  background-color: var(--background);
+  background-size: var(--width) 100%, var(--width) 100%, 20px 100%, 20px 100%;
+
+  background-attachment: local, local, scroll, scroll;
 }
 
 /*@import "tailwindcss";

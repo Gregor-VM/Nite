@@ -23,12 +23,12 @@ func main() {
 	// Create application with options
 	err := wails.Run(&options.App{
 		Title:  "nite",
-		Width:  1024,
-		Height: 768,
+		Width:  1080,
+		Height: 720,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
-		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
+		BackgroundColour: &options.RGBA{R: 10, G: 10, B: 10, A: 1},
 		OnStartup:        app.startup,
 		Bind: []interface{}{
 			app,

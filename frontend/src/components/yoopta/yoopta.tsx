@@ -24,6 +24,7 @@ function WithBaseFullSetup() {
   const note = notes[currentNoteIndex];
   const setNotes = useStateStore(state => state.setNotes);
   const currentTab = useStateStore(state => state.currentTab);
+  const setIsTyping = useStateStore(state => state.setIsTyping);
   const [value, setValue] = useState(WITH_BASIC_INIT_VALUE);
   const [title, setTitle] = useState("");
 
@@ -122,6 +123,7 @@ function WithBaseFullSetup() {
       setTitle("");
       editor.setEditorValue({});
       onAfterNewEditorFile();
+      titleRef.current?.focus();
     }
   }, [currentNoteIndex])
 
@@ -151,11 +153,12 @@ function WithBaseFullSetup() {
 
   return (
     <>
-      <textarea ref={titleRef} value={title} onChange={onTitleChange} placeholder='New note title' className='text-5xl leading-tight md:pl-[8rem] outline-none w-11/12 h-14 resize-none overflow-hidden'></textarea>
+      <textarea onKeyDown={() => setIsTyping(true)} ref={titleRef} value={title} onChange={onTitleChange} placeholder='New note title' className='text-5xl leading-tight md:pl-[8rem] outline-none w-11/12 h-14 resize-none overflow-hidden'></textarea>
       <div
-        className="w-full min-h-screen pt-0 md:px-[8rem] pb-[.2rem] flex justify-center"
+        className="w-full h-full pt-0 md:px-[8rem] pb-[.2rem] flex justify-center"
         ref={selectionRef}
         onClick={editorClick}
+        onKeyDown={() => setIsTyping(true)}
       >
         <YooptaEditor
           editor={editor}

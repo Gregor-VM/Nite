@@ -6,7 +6,7 @@ import { CheckForZombieAssets, RestoreNote, SearchNotes, UpdateNote } from "wail
 import { useStateStore } from "@/store/store"
 import useDebounce from "@/hooks/use-debounce"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu"
-import { MoreVertical } from 'lucide-react';
+import { MoreVertical, PlusCircle } from 'lucide-react';
 import { DeleteNote } from "./dialogs/delete-note"
 import { main } from "wailsjs/go/models"
 
@@ -24,6 +24,10 @@ export function AppSidebar() {
 
     const queryDebounced = useDebounce(query, 150);
 
+    const createNewNote = () => {
+        CheckForZombieAssets(currentTab?.ID, notes[currentNoteIndex]?.ID);
+        setCurrentNoteIndex(-1);
+    }
 
     const getNotes = async (query: string) => {
         const notes = await SearchNotes(currentTab.ID, query);
@@ -33,9 +37,6 @@ export function AppSidebar() {
     const selectNote = (index: number) => {
         CheckForZombieAssets(currentTab?.ID, notes[currentNoteIndex]?.ID)
         setCurrentNoteIndex(index);
-        /*if (currentTab.ID === notes[index].TabId) {
-            
-        }*/
     }
 
     const handleDeletion = (note: main.Note) => {
@@ -60,13 +61,23 @@ export function AppSidebar() {
     return (
         <>
             <Sidebar>
-                <SidebarContent className="p-3">
-                    <h2 className='text-xl mb-3'>Nite</h2>
-                    <Input value={query} onChange={(e) => setQuery(e.target.value)} id="filter" placeholder='Filter notes' autoComplete="off" />
-                    <div className="flex flex-col gap-2 mt-3">
+                <SidebarContent>
+                    <div className="flex items-center justify-between p-3">
+                        <h2 className='text-xl mb-3'>Nite</h2>
+                        <span onClick={createNewNote}
+                            title="Create new note" role="button" className={`
+                        ${currentNoteIndex === -1 ? "invisible opacity-0" : "visible opacity-100"}
+                        hover:bg-neutral-600 rounded-full
+                        shadow-sm hover:scale-125 hover:shadow-neutral-600 hover:rotate-90 transition-all duration-350 transition-discrete
+                        `}><PlusCircle /></span>
+                    </div>
+                    <div className="mx-2">
+                        <Input value={query} onChange={(e) => setQuery(e.target.value)} id="filter" placeholder='Filter notes' autoComplete="off" />
+                    </div>
+                    <div className="flex flex-col mt-3 overflow-y-auto">
                         {
                             notes.map((note, i) => {
-                                return <Button title={note.Title} key={note.ID} onClick={() => selectNote(i)} className="w-full group/note px-2 justify-between flex" variant="ghost">
+                                return <Button title={note.Title} key={note.ID} onClick={() => selectNote(i)} className="w-full group/note px-2 pl-4 justify-between flex rounded-none" variant="ghost">
                                     <span className="text-ellipsis overflow-hidden whitespace-nowrap">
                                         {note.Title}
                                     </span>
@@ -76,7 +87,7 @@ export function AppSidebar() {
                                                 <Button title="Options" className="w-2 h-6 opacity-0 group-hover/note:opacity-100 outline-none border-none shadow-none transition-all duration-200" variant="ghost"><MoreVertical /></Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent>
-                                                {currentTab?.ID === 1 && <DropdownMenuItem onClick={() => restoreNote(note)}>Restore</DropdownMenuItem>}
+                                                {currentTab?.ID === 1 && note?.TabId !== 1 && <DropdownMenuItem onClick={() => restoreNote(note)}>Restore</DropdownMenuItem>}
                                                 <DropdownMenuItem onClick={() => handleDeletion(note)} variant="destructive" >Delete</DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
