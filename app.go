@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -108,7 +109,7 @@ func (a *App) DeleteTab(tabId int) bool {
 
 // Note endpoints
 
-func (a *App) GetNotes(tabId int) []Note {
+/*func (a *App) GetNotes(tabId int) []Note {
 	notes := []Note{}
 
 	rows, err := db.Query("SELECT * FROM notes WHERE tabId=? ORDER BY ID DESC", tabId)
@@ -126,10 +127,43 @@ func (a *App) GetNotes(tabId int) []Note {
 	}
 
 	return notes
+}*/
+
+func (a *App) SearchNotes(tabId int, query string) []Note {
+	notes := []Note{}
+
+	searchTerm := "%" + query + "%"
+	var rows *sql.Rows
+	var err error
+	if tabId == 1 {
+		rows, err = db.Query("SELECT * FROM notes WHERE title LIKE ? AND IsDeleted LIKE 1 ORDER BY ID DESC", searchTerm)
+	} else {
+		rows, err = db.Query("SELECT * FROM notes WHERE tabId=? AND title LIKE ? AND IsDeleted LIKE 0 ORDER BY ID DESC", tabId, searchTerm)
+	}
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var note Note
+		if err := rows.Scan(&note.ID, &note.Title, &note.TabId, &note.IsDeleted); err != nil {
+			log.Fatal(err)
+		}
+		notes = append(notes, note)
+	}
+
+	return notes
 }
 
 func (a *App) InsertNote(title string, tabId int) int64 {
-	res, err := db.Exec("INSERT INTO notes(title, tabId) VALUES(?, ?)", title, tabId)
+	var res sql.Result
+	var err error
+	if tabId == 1 {
+		res, err = db.Exec("INSERT INTO notes(title, tabId, IsDeleted) VALUES(?, ?, ?)", title, tabId, 1)
+	} else {
+		res, err = db.Exec("INSERT INTO notes(title, tabId) VALUES(?, ?)", title, tabId)
+	}
 	if err != nil {
 		fmt.Println("Error inserting note(title, tabId) values: ", title, " into tab:", tabId)
 		return 0
@@ -147,6 +181,15 @@ func (a *App) UpdateNote(newTitle string, noteId int) bool {
 	_, err := db.Exec("UPDATE notes SET title = ? WHERE ID = ?", newTitle, noteId)
 	if err != nil {
 		fmt.Println("Error updating note: ", noteId)
+		return false
+	}
+	return true
+}
+
+func (a *App) RestoreNote(noteId int) bool {
+	_, err := db.Exec("UPDATE notes SET IsDeleted = 0 WHERE ID = ?", noteId)
+	if err != nil {
+		fmt.Println("Error restoring the note: ", noteId)
 		return false
 	}
 	return true
@@ -171,7 +214,7 @@ func (a *App) GetNoteById(noteId int) Note {
 	return notes[0]
 }
 
-func (a *App) DeleteNote(noteId int) bool {
+func (a *App) DeleteNote(tabId int, noteId int) bool {
 
 	note := a.GetNoteById(noteId)
 
@@ -181,13 +224,17 @@ func (a *App) DeleteNote(noteId int) bool {
 			fmt.Println("Error deleting note: ", noteId)
 			return false
 		}
+		err = os.RemoveAll(fmt.Sprintf("./Nite/%d/%d", tabId, noteId))
+		if err != nil {
+			fmt.Printf("Error while removing folder ./Nite/%d/%d\n", tabId, noteId)
+		}
+		return true
 	} else {
 		_, err := db.Exec("UPDATE notes SET IsDeleted = 1 WHERE ID = ?", noteId)
 		if err != nil {
 			fmt.Println("Error updating note: ", noteId)
 			return false
 		}
-		return true
 	}
 
 	return true
@@ -305,7 +352,7 @@ func (a *App) CheckForZombieAssets(tabId int, noteId int) {
 		}
 
 		if block.Type == "Video" && block.Value[0].Type == "video" {
-			// images
+			// video
 			videoUrl := strings.Split(block.Value[0].Props.Src, "/")
 			fileKey := videoUrl[len(videoUrl)-1]
 			fileSet[fileKey] = true
@@ -315,6 +362,14 @@ func (a *App) CheckForZombieAssets(tabId int, noteId int) {
 			fileKey = posterUrl[len(posterUrl)-1]
 			fileSet[fileKey] = true
 		}
+
+		if block.Type == "File" && block.Value[0].Type == "file" {
+			// video
+			videoUrl := strings.Split(block.Value[0].Props.Src, "/")
+			fileKey := videoUrl[len(videoUrl)-1]
+			fileSet[fileKey] = true
+		}
+
 	}
 
 	for _, file := range files {

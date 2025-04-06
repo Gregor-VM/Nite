@@ -85,7 +85,7 @@ function WithBaseFullSetup() {
   }
 
   const readFile = async () => {
-    const editorValue = await ReadNote(currentTab.ID, note.ID);
+    const editorValue = await ReadNote(note.TabId, note.ID);
     const parsedValue: YooptaContentValue = JSON.parse(editorValue);
     editor.setEditorValue(parsedValue);
     editor.focus();
@@ -115,6 +115,15 @@ function WithBaseFullSetup() {
     onAfterNewEditorFile();
     window.sessionStorage.setItem("tabId", String(currentTab?.ID));
   }, [currentTab.ID])
+
+  // reset value when noteId change to new note
+  useEffect(() => {
+    if (currentNoteIndex === -1) {
+      setTitle("");
+      editor.setEditorValue({});
+      onAfterNewEditorFile();
+    }
+  }, [currentNoteIndex])
 
   useEffect(() => {
     const preventLineBreaks = (e: KeyboardEvent) => {

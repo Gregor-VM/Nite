@@ -10,8 +10,8 @@ export function DecodeData(arg1) {
   return window['go']['main']['App']['DecodeData'](arg1);
 }
 
-export function DeleteNote(arg1) {
-  return window['go']['main']['App']['DeleteNote'](arg1);
+export function DeleteNote(arg1, arg2) {
+  return window['go']['main']['App']['DeleteNote'](arg1, arg2);
 }
 
 export function DeleteTab(arg1) {
@@ -20,10 +20,6 @@ export function DeleteTab(arg1) {
 
 export function GetNoteById(arg1) {
   return window['go']['main']['App']['GetNoteById'](arg1);
-}
-
-export function GetNotes(arg1) {
-  return window['go']['main']['App']['GetNotes'](arg1);
 }
 
 export function GetTabs() {
@@ -54,12 +50,20 @@ export function RemoveFile(arg1) {
   return window['go']['main']['App']['RemoveFile'](arg1);
 }
 
+export function RestoreNote(arg1) {
+  return window['go']['main']['App']['RestoreNote'](arg1);
+}
+
 export function SaveFile(arg1, arg2, arg3, arg4) {
   return window['go']['main']['App']['SaveFile'](arg1, arg2, arg3, arg4);
 }
 
 export function SaveNote(arg1, arg2, arg3) {
   return window['go']['main']['App']['SaveNote'](arg1, arg2, arg3);
+}
+
+export function SearchNotes(arg1, arg2) {
+  return window['go']['main']['App']['SearchNotes'](arg1, arg2);
 }
 
 export function UpdateNote(arg1, arg2) {

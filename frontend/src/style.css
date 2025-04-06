@@ -194,7 +194,9 @@
   }
 
   .yoo-embed-flex,
-  .yoo-image-flex {
+  .yoo-image-flex,
+  .yoo-video-flex,
+  .yoo-file-flex {
     background-color: var(--popover-bg);
     color: var(--foreground) !important;
 
@@ -204,7 +206,9 @@
   }
 
   .yoo-embed-flex:disabled,
-  .yoo-image-flex:disabled {
+  .yoo-image-flex:disabled,
+  .yoo-video-flex:disabled,
+  .yoo-file-flex:disabled {
     color: var(--foreground) !important;
     opacity: .5;
   }

@@ -6,13 +6,11 @@ export function CheckForZombieAssets(arg1:number,arg2:number):Promise<void>;
 
 export function DecodeData(arg1:string):Promise<Array<number>>;
 
-export function DeleteNote(arg1:number):Promise<boolean>;
+export function DeleteNote(arg1:number,arg2:number):Promise<boolean>;
 
 export function DeleteTab(arg1:number):Promise<boolean>;
 
 export function GetNoteById(arg1:number):Promise<main.Note>;
-
-export function GetNotes(arg1:number):Promise<Array<main.Note>>;
 
 export function GetTabs():Promise<Array<main.Tab>>;
 
@@ -28,9 +26,13 @@ export function ReadNote(arg1:number,arg2:number):Promise<string>;
 
 export function RemoveFile(arg1:string):Promise<void>;
 
+export function RestoreNote(arg1:number):Promise<boolean>;
+
 export function SaveFile(arg1:string,arg2:number,arg3:number,arg4:string):Promise<string>;
 
 export function SaveNote(arg1:number,arg2:number,arg3:string):Promise<boolean>;
+
+export function SearchNotes(arg1:number,arg2:string):Promise<Array<main.Note>>;
 
 export function UpdateNote(arg1:string,arg2:number):Promise<boolean>;
 
