@@ -333,7 +333,7 @@
 
 
 .tabs {
-  --shadow-color: rgba(40, 40, 40, .4);
+  --shadow-color: oklch(from var(--foreground) l c h / 0.15);
   --width: 20px;
   background-image:
     linear-gradient(to right, var(--background), var(--background)),
@@ -352,6 +352,18 @@
 body {
   overflow: hidden;
   max-height: 100vh;
+}
+
+#filter::selection {
+  color: var(--foreground);
+}
+
+.appnavbar {
+  --wails-draggable: drag
+}
+
+.avoiddrag {
+  --wails-draggable: no-drag
 }
 
 /*@import "tailwindcss";

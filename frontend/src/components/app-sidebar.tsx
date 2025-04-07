@@ -9,12 +9,14 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { MoreVertical, PlusCircle } from 'lucide-react';
 import { DeleteNote } from "./dialogs/delete-note"
 import { main } from "wailsjs/go/models"
+import { ModeToggle } from "./mode-toggle"
 
 export function AppSidebar() {
 
     const currentTab = useStateStore(state => state.currentTab);
     const notes = useStateStore(state => state.notes);
     const currentNoteIndex = useStateStore(state => state.currentNoteIndex);
+    const isTyping = useStateStore(state => state.isTyping);
     const setNotes = useStateStore(state => state.setNotes);
     const setCurrentNoteIndex = useStateStore(state => state.setCurrentNoteIndex);
 
@@ -62,22 +64,28 @@ export function AppSidebar() {
         <>
             <Sidebar>
                 <SidebarContent>
-                    <div className="flex items-center justify-between p-3">
-                        <h2 className='text-xl mb-3'>Nite</h2>
-                        <span onClick={createNewNote}
-                            title="Create new note" role="button" className={`
-                        ${currentNoteIndex === -1 ? "invisible opacity-0" : "visible opacity-100"}
-                        hover:bg-neutral-600 rounded-full
-                        shadow-sm hover:scale-125 hover:shadow-neutral-600 hover:rotate-90 transition-all duration-350 transition-discrete
-                        `}><PlusCircle /></span>
+                    <div className="flex items-center justify-between px-3 pt-2">
+                        <h2 className='text-xl'>Nite</h2>
+                        <div className="flex justify-center items-center">
+                            <ModeToggle />
+                            <span onClick={createNewNote}
+                                title="Create new note" role="button" className={`
+                            ${currentNoteIndex === -1 || isTyping ? "invisible opacity-0 w-0" : "visible opacity-100 w-min ml-2"}
+                            dark:hover:bg-neutral-600 hover:bg-neutral-50
+                             rounded-full
+                            shadow-sm hover:scale-125 
+                            dark:hover:shadow-neutral-600 hover:shadow-neutral-50
+                            hover:rotate-90 transition-all duration-350 transition-discrete overflow-hidden
+                            `}><PlusCircle /></span>
+                        </div>
                     </div>
                     <div className="mx-2">
                         <Input value={query} onChange={(e) => setQuery(e.target.value)} id="filter" placeholder='Filter notes' autoComplete="off" />
                     </div>
-                    <div className="flex flex-col mt-3 overflow-y-auto">
+                    <div className="flex flex-col mt-3 overflow-y-auto overflow-x-hidden">
                         {
                             notes.map((note, i) => {
-                                return <Button title={note.Title} key={note.ID} onClick={() => selectNote(i)} className="w-full group/note px-2 pl-4 justify-between flex rounded-none" variant="ghost">
+                                return <Button title={note.Title} key={note.ID} onClick={() => selectNote(i)} className={`w-full group/note px-2 pl-4 justify-between flex rounded-none ${currentNoteIndex === i ? "dark:bg-neutral-800 bg-neutral-100" : ""}`} variant="ghost">
                                     <span className="text-ellipsis overflow-hidden whitespace-nowrap">
                                         {note.Title}
                                     </span>

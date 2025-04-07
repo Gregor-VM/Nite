@@ -14,8 +14,6 @@ export function GetNoteById(arg1:number):Promise<main.Note>;
 
 export function GetTabs():Promise<Array<main.Tab>>;
 
-export function Greet(arg1:string):Promise<string>;
-
 export function ImageSize(arg1:string):Promise<Array<number>>;
 
 export function InsertNote(arg1:string,arg2:number):Promise<number>;

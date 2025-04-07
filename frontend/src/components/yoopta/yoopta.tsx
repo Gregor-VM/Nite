@@ -152,10 +152,10 @@ function WithBaseFullSetup() {
   }, [debouncedValue]);
 
   return (
-    <div className='overflow-y-auto h-[90vh]'>
-      <textarea onKeyDown={() => setIsTyping(true)} ref={titleRef} value={title} onChange={onTitleChange} placeholder='New note title' className='text-5xl leading-tight md:pl-[8rem] outline-none w-11/12 resize-none overflow-hidden'></textarea>
+    <div className='overflow-y-auto h-[94vh] pt-3'>
+      <textarea onKeyDown={() => setIsTyping(true)} ref={titleRef} value={title} onChange={onTitleChange} placeholder='New note title' className='text-5xl leading-tight md:pl-[8rem] px-[4rem] outline-none w-11/12 resize-none overflow-hidden'></textarea>
       <div
-        className="pt-0 md:px-[8rem] pb-[.2rem]"
+        className="pt-0 md:px-[8rem] px-[4rem] pb-[.2rem]"
         ref={selectionRef}
         onClick={editorClick}
         onKeyDown={() => setIsTyping(true)}

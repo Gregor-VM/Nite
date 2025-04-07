@@ -80,12 +80,13 @@ function Tabs() {
 
   return (
     <>
-      <nav className="flex gap-2 tabs overflow-x-auto hide-scrollbar">
+      <nav onDoubleClick={e => e.stopPropagation()} className="flex m-[0.35rem] gap-2 tabs overflow-x-auto hide-scrollbar avoiddrag">
         {tabs.map(tab => {
           return (
             <ContextMenu key={tab.ID}>
               <ContextMenuTrigger>
                 <Button
+                  className='h-8 py-0'
                   onClick={() => changeTab(tab)}
                   variant={getButtonVariant(tab.ID)}
                 >{tab.Title}</Button>
@@ -106,7 +107,7 @@ function Tabs() {
         <CreateTab tabToEdit={editTab} open={openModal} setOpen={setOpenModal} updateTabs={getTabs} />
         <DeleteTab updateTabs={getTabs} tabToEdit={editTab} open={openDeleteModal} setOpen={setOpenDeleteModal} />
       </nav>
-      <Button onClick={showCreateTab} variant="ghost"><Plus /></Button>
+      <Button className='h-8 py-0 m-[0.35rem]' onClick={showCreateTab} variant="ghost"><Plus /></Button>
     </>
   )
 }
