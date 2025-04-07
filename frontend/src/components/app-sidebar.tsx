@@ -10,6 +10,7 @@ import { MoreVertical, PlusCircle } from 'lucide-react';
 import { DeleteNote } from "./dialogs/delete-note"
 import { main } from "wailsjs/go/models"
 import { ModeToggle } from "./mode-toggle"
+import nite from "@/assets/images/nite.png"
 
 export function AppSidebar() {
 
@@ -65,7 +66,9 @@ export function AppSidebar() {
             <Sidebar>
                 <SidebarContent>
                     <div className="flex items-center justify-between px-3 pt-2">
-                        <h2 className='text-xl'>Nite</h2>
+                        <h2 className='text-xl'>
+                            <img className="w-14 dark:invert-100" src={nite} />
+                        </h2>
                         <div className="flex justify-center items-center">
                             <ModeToggle />
                             <span onClick={createNewNote}
