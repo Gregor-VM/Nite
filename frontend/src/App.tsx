@@ -45,7 +45,7 @@ function App() {
     return (
         <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
             <Layout>
-                <nav className={`flex w-full justify-between p-2 pl-10 transition-all duration-500 ${isTyping ? "opacity-0 invisible" : "opacity-100 visible"}`}>
+                <nav className={`flex w-full justify-between p-2 pl-10 transition-all duration-500 ${isTyping ? "opacity-0" : "opacity-100"}`}>
                     <div className='flex justify-center gap-2 w-11/12 mx-auto'><Tabs /></div>
                     <ModeToggle />
                 </nav>

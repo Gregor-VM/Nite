@@ -349,6 +349,11 @@
   background-attachment: local, local, scroll, scroll;
 }
 
+body {
+  overflow: hidden;
+  max-height: 100vh;
+}
+
 /*@import "tailwindcss";
 
 body {

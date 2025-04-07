@@ -152,10 +152,10 @@ function WithBaseFullSetup() {
   }, [debouncedValue]);
 
   return (
-    <>
-      <textarea onKeyDown={() => setIsTyping(true)} ref={titleRef} value={title} onChange={onTitleChange} placeholder='New note title' className='text-5xl leading-tight md:pl-[8rem] outline-none w-11/12 h-14 resize-none overflow-hidden'></textarea>
+    <div className='overflow-y-auto h-[90vh]'>
+      <textarea onKeyDown={() => setIsTyping(true)} ref={titleRef} value={title} onChange={onTitleChange} placeholder='New note title' className='text-5xl leading-tight md:pl-[8rem] outline-none w-11/12 resize-none overflow-hidden'></textarea>
       <div
-        className="w-full h-full pt-0 md:px-[8rem] pb-[.2rem] flex justify-center"
+        className="pt-0 md:px-[8rem] pb-[.2rem]"
         ref={selectionRef}
         onClick={editorClick}
         onKeyDown={() => setIsTyping(true)}
@@ -168,10 +168,11 @@ function WithBaseFullSetup() {
           selectionBoxRoot={selectionRef}
           width="100%"
           value={value}
+          className='h-full'
           onChange={onChange}
         />
       </div>
-    </>
+    </div>
   );
 }
 
