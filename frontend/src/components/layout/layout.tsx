@@ -1,6 +1,6 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { AppSidebar } from "./app-sidebar"
 import { useStateStore } from "@/store/store";
+import { AppSidebar } from "../app-sidebar/app-sidebar";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     const isTyping = useStateStore(state => state.isTyping);

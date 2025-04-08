@@ -1,14 +1,15 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Button } from './ui/button'
+import { Button } from '../ui/button'
 import { CheckForZombieAssets, GetTabs } from 'wailsjs/go/main/App'
 import { main } from 'wailsjs/go/models'
-import { CreateTab } from './dialogs/create-tab';
-import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from './ui/context-menu';
-import { ContextMenuShortcut } from './ui/context-menu';
+import { CreateTab } from '../dialogs/create-tab';
+import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '../ui/context-menu';
+import { ContextMenuShortcut } from '../ui/context-menu';
 import { Plus } from 'lucide-react';
-import { DeleteTab } from './dialogs/delete-tab';
-import useShortcut from '@/hooks/useShortcut';
+import { DeleteTab } from '../dialogs/delete-tab';
+import useShortcut from '@/hooks/use-shortcut';
 import { tabInitialState, useStateStore } from '@/store/store';
+import styles from './tabs.module.css';
 
 function Tabs() {
 
@@ -80,7 +81,7 @@ function Tabs() {
 
   return (
     <>
-      <nav onDoubleClick={e => e.stopPropagation()} className="flex m-[0.35rem] gap-2 tabs overflow-x-auto hide-scrollbar avoiddrag">
+      <nav onDoubleClick={e => e.stopPropagation()} className={`${styles.tabs} flex m-[0.35rem] gap-2 overflow-x-auto hide-scrollbar avoiddrag`}>
         {tabs.map(tab => {
           return (
             <ContextMenu key={tab.ID}>

@@ -1,0 +1,3 @@
+.filter::selection {
+    color: var(--foreground);
+}

@@ -1,23 +1,22 @@
 import YooptaEditor, {
   createYooptaEditor,
-  Elements,
-  Blocks,
-  useYooptaEditor,
   YooptaContentValue,
   YooptaOnChangeOptions,
 } from '@yoopta/editor';
+import { YOOPTA_INIT_VALUE } from './initValue';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { WITH_BASIC_INIT_VALUE } from '../initValue';
 import { InsertNote, ReadNote, SaveNote, UpdateNote } from 'wailsjs/go/main/App';
 import { useStateStore } from '@/store/store';
 import useDebounce from '@/hooks/use-debounce';
 import { HistoryStack, HistoryStackName } from '@yoopta/editor/dist/editor/core/history';
 import { MARKS, plugins, TOOLS } from './data';
-import useAutosize from '@/hooks/use-autoResize';
+
+import './styles.css';
+import useAutosize from '@/hooks/use-autoresize';
 
 
-function WithBaseFullSetup() {
+function Yoopta() {
   const currentNoteIndex = useStateStore(state => state.currentNoteIndex);
   const setCurrentNoteIndex = useStateStore(state => state.setCurrentNoteIndex);
   const notes = useStateStore(state => state.notes);
@@ -25,7 +24,7 @@ function WithBaseFullSetup() {
   const setNotes = useStateStore(state => state.setNotes);
   const currentTab = useStateStore(state => state.currentTab);
   const setIsTyping = useStateStore(state => state.setIsTyping);
-  const [value, setValue] = useState(WITH_BASIC_INIT_VALUE);
+  const [value, setValue] = useState(YOOPTA_INIT_VALUE);
   const [title, setTitle] = useState("");
 
   const editor = useMemo(() => createYooptaEditor(), []);
@@ -52,10 +51,6 @@ function WithBaseFullSetup() {
     notesCopy[currentNoteIndex].Title = value;
     setNotes(notesCopy);
     setTitle(value);
-  }
-
-  const editorClick = () => {
-    //editor.focus()
   }
 
   const onAfterNewEditorFile = () => {
@@ -163,7 +158,6 @@ function WithBaseFullSetup() {
       <div
         className="pt-0 md:px-[8rem] px-[4rem] pb-[.2rem]"
         ref={selectionRef}
-        onClick={editorClick}
         onKeyDown={() => setIsTyping(true)}
       >
         <YooptaEditor
@@ -182,4 +176,4 @@ function WithBaseFullSetup() {
   );
 }
 
-export default WithBaseFullSetup;
+export default Yoopta;

@@ -1,0 +1,16 @@
+.tabs {
+    --shadow-color: oklch(from var(--foreground) l c h / 0.15);
+    --width: 20px;
+    background-image:
+        linear-gradient(to right, var(--background), var(--background)),
+        linear-gradient(to right, var(--background), var(--background)),
+        linear-gradient(to right, var(--shadow-color), rgba(255, 255, 255, 0)),
+        linear-gradient(to left, var(--shadow-color), rgba(255, 255, 255, 0));
+
+    background-position: left center, right center, left center, right center;
+    background-repeat: no-repeat;
+    background-color: var(--background);
+    background-size: var(--width) 100%, var(--width) 100%, 20px 100%, 20px 100%;
+
+    background-attachment: local, local, scroll, scroll;
+}

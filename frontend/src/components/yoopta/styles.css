@@ -1,0 +1,156 @@
+/* TODO: Remove when change is merge to yoopta repo */
+.yoopta-placeholder:after {
+    pointer-events: none;
+}
+
+/* yoopta styles */
+.dark .yoopta-editor {
+    --popover-bg: color-mix(in srgb, var(--background), white 2%);
+    --intense-popover-bg: rgb(15 15 15 / 1);
+    --border-color: rgb(40 40 40 / 1);
+    --selection-bg: rgb(25 25 25 / 1);
+
+    .yoopta-action-menu-list-content {
+        background-color: var(--popover-bg);
+        border-color: var(--border-color);
+
+        button.yoopta-button .yoo-action-menu-flex {
+            background-color: var(--intense-popover-bg);
+            border-color: var(--border-color);
+        }
+
+        .yoopta-button[aria-selected=true],
+        .yoopta-button:hover {
+            background-color: var(--selection-bg);
+        }
+    }
+
+    .yoopta-block-options-menu-content {
+        border-color: var(--border-color);
+        background-color: var(--popover-bg);
+
+        .yoopta-block-options-button:hover {
+            background-color: var(--selection-bg);
+        }
+    }
+
+    .yoopta-block-action-buttons button {
+        color: color-mix(in srgb, var(--foreground), black 10%);
+    }
+
+    .yoopta-callout {
+        --tw-bg-opacity: .25;
+        color: var(--foreground);
+    }
+
+    .yoopta-block-options-button[style*="background-color"] {
+        background-color: var(--border-color) !important;
+
+        & svg {
+            color: #fff;
+        }
+    }
+
+    .yoopta-link-preview {
+        background-color: var(--popover-bg);
+        color: var(--foreground) !important;
+
+        button:hover {
+            background-color: var(--selection-bg);
+        }
+    }
+
+    .yoo-embed-flex,
+    .yoo-image-flex,
+    .yoo-video-flex,
+    .yoo-file-flex {
+        background-color: var(--popover-bg);
+        color: var(--foreground) !important;
+
+        & button {
+            color: var(--foreground) !important;
+        }
+    }
+
+    .yoo-embed-flex:disabled,
+    .yoo-image-flex:disabled,
+    .yoo-video-flex:disabled,
+    .yoo-file-flex:disabled {
+        color: var(--foreground) !important;
+        opacity: .5;
+    }
+
+    .yoopta-toolbar-root {
+        background-color: var(--popover-bg);
+        border-color: var(--border-color);
+
+        .yoopta-button.yoopta-toolbar-item:hover,
+        .yoopta-button.yoopta-toolbar-item-mark:hover {
+            background-color: var(--border-color);
+        }
+
+        .yoopta-button.yoopta-toolbar-item[style*="background-color"],
+        .yoopta-button.yoopta-toolbar-item-mark[style*="background-color"] {
+            background-color: var(--border-color) !important;
+        }
+    }
+
+    /* text and background color change */
+    .yoo-toolbar-text-gray-600 {
+        color: var(--foreground) !important;
+    }
+
+    .yoo-toolbar-text-gray-600:hover {
+        background: var(--border-color) !important;
+    }
+
+    .yoopta-link-tool,
+    .yoo-toolbar-border {
+        background-color: var(--popover-bg);
+        border-color: var(--border-color);
+
+        label,
+        input {
+            color: var(--foreground);
+        }
+    }
+
+    /*.yoo-toolbar-border{
+    background-color: var(--popover-bg);
+  }*/
+
+    .yoopta-accordion-list-item-heading div.yoo-accordion-absolute button {
+        filter: invert(1);
+    }
+
+    .yoopta-mark-code {
+        background-color: #1e1e1e;
+    }
+
+    #yoo-select-content {
+        background-color: var(--popover-bg);
+
+        button:hover {
+            background-color: var(--selection-bg);
+        }
+
+        button:focus {
+            background-color: var(--border-color) !important;
+        }
+    }
+
+    .yoopta-code-cm-editor .cm-editor {
+        border-color: var(--border-color);
+    }
+
+
+
+    .yoopta-extended-block-actions {
+        --tw-bg-opacity: unset;
+    }
+
+}
+
+.yoopta-editor .yoopta-callout-options {
+    color: var(--foreground);
+}
