@@ -10,7 +10,7 @@ function WindowsButtons() {
 
     const buttons = useMemo(() => [
         { icon: <Minus width={17} />, onClick: () => (window as any).runtime.WindowMinimise() },
-        { icon: isMaximaze ? <Square width={12} /> : <Copy style={{ transform: "rotateY(180deg)" }} width={14} />, onClick: () => { isMaximaze ? (window as any).runtime.WindowUnmaximise() : (window as any).runtime.WindowMaximise(); setIsMaximaze(!isMaximaze) } },
+        { icon: !isMaximaze ? <Square width={12} /> : <Copy style={{ transform: "rotateY(180deg)" }} width={14} />, onClick: () => { isMaximaze ? (window as any).runtime.WindowUnmaximise() : (window as any).runtime.WindowMaximise(); setIsMaximaze(!isMaximaze) } },
         { icon: <X width={17} />, onClick: () => (window as any).runtime.Quit() },
     ], [isMaximaze]);
 

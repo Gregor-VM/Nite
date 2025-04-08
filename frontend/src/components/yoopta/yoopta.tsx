@@ -89,7 +89,13 @@ function WithBaseFullSetup() {
     const editorValue = await ReadNote(note.TabId, note.ID);
     const parsedValue: YooptaContentValue = JSON.parse(editorValue);
     editor.setEditorValue(parsedValue);
-    editor.focus();
+
+    // focus first element automatically
+    // this avoid scroll to top issue when focusing the element for the first time
+    const firstBlock = Object.keys(parsedValue)[0];
+    editor.focusBlock(parsedValue[firstBlock].id)
+
+
     onAfterNewEditorFile();
   }
 

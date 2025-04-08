@@ -7,6 +7,7 @@ import Layout from './components/layout';
 import { useEffect } from 'react';
 import { useStateStore } from './store/store';
 import WindowsButtons from './components/windowbuttons/windowbuttons';
+import { DomReady } from 'wailsjs/go/main/App';
 
 function App() {
 
@@ -42,6 +43,8 @@ function App() {
         window.addEventListener("mousemove", function (e) {
             setIsTyping(false);
         });
+
+        DomReady()
 
     }, []);
 
