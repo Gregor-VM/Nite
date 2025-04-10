@@ -1,4 +1,4 @@
-module github.com/Gregor-VM/Nite
+module github.com/gregor-vm/nite
 
 go 1.23
 

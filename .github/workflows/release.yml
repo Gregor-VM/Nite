@@ -35,5 +35,5 @@ jobs:
         with:
           build-name: ${{ matrix.build.name }}
           build-platform: ${{ matrix.build.platform }}
-          wails-version: "v2.9.0"
+          wails-version: "v2.10.1"
           go-version: '1.24'
