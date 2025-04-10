@@ -1,4 +1,4 @@
-module changeme
+module github.com/Gregor-VM/Nite
 
 go 1.23
 

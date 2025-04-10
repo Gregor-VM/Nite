@@ -68,8 +68,6 @@ const plugins = [
       onUpload: async (file) => {
         const data = await saveFile(file, 'auto');
         return data;
-        /*const response = await uploadToCloudinary(file, 'auto');
-        return { src: response.secure_url, format: response.format, name: response.name, size: response.bytes };*/
       },
     },
   }),
