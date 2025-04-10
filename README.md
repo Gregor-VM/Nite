@@ -1,4 +1,4 @@
-[icon.ico](screenshots/logo.png)
+[logo.png](screenshots/logo.png)
 
 ## Nite
 
