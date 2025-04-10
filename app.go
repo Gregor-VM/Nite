@@ -35,11 +35,12 @@ func NewApp() *App {
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
-}
-
-func (a *App) DomReady() {
 	runtime.WindowMaximise(a.ctx)
 	runtime.WindowSetMinSize(a.ctx, 470, 200)
+}
+
+func (a *App) Platform() string {
+	return runtime.Environment(a.ctx).Platform
 }
 
 // Tabs endpoints

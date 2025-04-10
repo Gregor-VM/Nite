@@ -18,10 +18,6 @@ export function DeleteTab(arg1) {
   return window['go']['main']['App']['DeleteTab'](arg1);
 }
 
-export function DomReady() {
-  return window['go']['main']['App']['DomReady']();
-}
-
 export function GetNoteById(arg1) {
   return window['go']['main']['App']['GetNoteById'](arg1);
 }
@@ -40,6 +36,10 @@ export function InsertNote(arg1, arg2) {
 
 export function InsertTab(arg1) {
   return window['go']['main']['App']['InsertTab'](arg1);
+}
+
+export function Platform() {
+  return window['go']['main']['App']['Platform']();
 }
 
 export function ReadNote(arg1, arg2) {

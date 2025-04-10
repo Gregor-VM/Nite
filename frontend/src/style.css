@@ -177,7 +177,7 @@
 
 /* Drag and Drop */
 
-.appnavbar {
+.allowdrag {
   --wails-draggable: drag
 }
 

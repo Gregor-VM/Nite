@@ -3,7 +3,6 @@ import { ThemeProvider } from "@/components/theme-provider/theme-provider"
 import Editor from './components/yoopta/yoopta';
 import Layout from './components/layout/layout';
 import { useEffect } from 'react';
-import { DomReady } from 'wailsjs/go/main/App';
 import WindowBar from './components/window-bar/window-bar';
 import Tabs from './components/tabs/tabs';
 
@@ -28,8 +27,6 @@ function App() {
         (window as any).open = (url: string, target: string) => {
             (window as any).runtime.BrowserOpenURL(url);
         }
-
-        DomReady()
 
     }, []);
 

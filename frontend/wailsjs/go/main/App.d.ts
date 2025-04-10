@@ -10,8 +10,6 @@ export function DeleteNote(arg1:number,arg2:number):Promise<boolean>;
 
 export function DeleteTab(arg1:number):Promise<boolean>;
 
-export function DomReady():Promise<void>;
-
 export function GetNoteById(arg1:number):Promise<main.Note>;
 
 export function GetTabs():Promise<Array<main.Tab>>;
@@ -21,6 +19,8 @@ export function ImageSize(arg1:string):Promise<Array<number>>;
 export function InsertNote(arg1:string,arg2:number):Promise<number>;
 
 export function InsertTab(arg1:string):Promise<boolean>;
+
+export function Platform():Promise<string>;
 
 export function ReadNote(arg1:number,arg2:number):Promise<string>;
 
