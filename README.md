@@ -1,4 +1,4 @@
-[icon.ico](build/windows/icon.ico)
+[icon.ico](screenshots/logo.png)
 
 ## Nite
 
@@ -22,7 +22,7 @@ The application is built using [Wails 2](https://wails.io/) framework, which use
 
 ---
 
-You can either download one of the GitHub Releases or build the project on your one as shown next.
+You can either download one of the [GitHub Releases](https://github.com/Gregor-VM/Nite/releases) or build the project on your one as shown next.
 
 ### How to build the project?
 
