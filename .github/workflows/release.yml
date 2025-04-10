@@ -5,6 +5,9 @@ on:
     tags:
       - '*'
 
+permissions:
+  contents: write
+
 env:
   NODE_OPTIONS: "--max-old-space-size=4096"
 
@@ -14,13 +17,13 @@ jobs:
       fail-fast: false
       matrix:
         build:
-          - name: 'nite-linux-amd64'
+          - name: 'Nite'
             platform: 'linux/amd64'
             os: 'ubuntu-latest'
-          - name: 'nite-windows-amd64'
+          - name: 'Nite'
             platform: 'windows/amd64'
             os: 'windows-latest'
-          - name: 'nite-dawin-universal'
+          - name: 'Nite'
             platform: 'darwin/universal'
             os: 'macos-latest'
     runs-on: ${{ matrix.build.os }}
