@@ -13,7 +13,7 @@ import { HistoryStack, HistoryStackName } from '@yoopta/editor/dist/editor/core/
 import { MARKS, plugins, TOOLS } from './data';
 
 import './styles.css';
-import useAutosize from '@/hooks/use-autoresize';
+import useAutosize from '@/hooks/use-autoResize';
 
 
 function Yoopta() {
