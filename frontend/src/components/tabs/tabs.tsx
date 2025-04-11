@@ -99,7 +99,7 @@ function Tabs() {
                 </ContextMenuItem>
                 <ContextMenuItem onClick={() => showDeleteModal(tab)} disabled={tab.ID === 1} variant='destructive'>
                   Delete
-                  <ContextMenuShortcut>⌘ + D</ContextMenuShortcut>
+                  <ContextMenuShortcut>⌘ + R</ContextMenuShortcut>
                 </ContextMenuItem>
               </ContextMenuContent>
             </ContextMenu>

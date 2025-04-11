@@ -14,6 +14,7 @@ import { MARKS, plugins, TOOLS } from './data';
 
 import './styles.css';
 import useAutosize from '@/hooks/use-autoResize';
+import { main } from 'wailsjs/go/models';
 
 
 function Yoopta() {
@@ -30,6 +31,7 @@ function Yoopta() {
   const editor = useMemo(() => createYooptaEditor(), []);
   const selectionRef = useRef(null);
   const titleRef = useRef<HTMLTextAreaElement>(null);
+  const isReadingNote = useRef(false);
 
   const debouncedValue = useDebounce(value, 1000);
   useAutosize(titleRef.current, title);
@@ -55,6 +57,7 @@ function Yoopta() {
 
   const onAfterNewEditorFile = () => {
     resetHistory();
+    isReadingNote.current = false;
   }
 
   const resetHistory = () => {
@@ -76,8 +79,8 @@ function Yoopta() {
   }
 
 
-  const saveFile = (noteId: number, editorValue: YooptaContentValue) => {
-    SaveNote(currentTab.ID, noteId, JSON.stringify(editorValue))
+  const saveFile = (note: main.Note, editorValue: YooptaContentValue) => {
+    SaveNote(note.TabId, note.ID, JSON.stringify(editorValue))
   }
 
   const readFile = async () => {
@@ -104,6 +107,7 @@ function Yoopta() {
   // on note change
   useEffect(() => {
     if (note && note?.Title) {
+      isReadingNote.current = true;
       setTitle(note.Title);
       readFile()
       window.sessionStorage.setItem("noteId", String(note?.ID));
@@ -149,7 +153,8 @@ function Yoopta() {
   }, []);
 
   useEffect(() => {
-    if (note?.ID) saveFile(note.ID, value);
+    if (isReadingNote.current) return;
+    if (note?.ID) saveFile(note, debouncedValue);
   }, [debouncedValue]);
 
   return (

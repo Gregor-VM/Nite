@@ -16,21 +16,23 @@ interface NoteItemProps {
 function NoteItem({ currentNoteIndex, note, noteIndex, currentTab, selectNote, restoreNote, handleDeletion }: NoteItemProps) {
 
     return (
-        <Button title={note.Title} key={note.ID} onClick={() => selectNote(noteIndex)} className={`w-full group/note px-2 pl-4 justify-between flex rounded-none ${currentNoteIndex === noteIndex ? "dark:bg-neutral-800 bg-neutral-100" : ""}`} variant="ghost">
-            <span className="text-ellipsis overflow-hidden whitespace-nowrap">
-                {note.Title}
+        <Button asChild title={note.Title} key={note.ID} onClick={() => selectNote(noteIndex)} className={`w-full group/note px-2 pl-4 justify-between flex rounded-none ${currentNoteIndex === noteIndex ? "dark:bg-neutral-800 bg-neutral-100" : ""}`} variant="ghost">
+            <span className="cursor-pointer">
+                <span className="text-ellipsis overflow-hidden whitespace-nowrap">
+                    {note.Title}
+                </span>
+                <div onClick={e => e.stopPropagation()}>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger>
+                            <Button asChild title="Options" className="w-2 h-6 opacity-0 group-hover/note:opacity-100 outline-none border-none shadow-none transition-all duration-200 cursor-pointer" variant="ghost"><span><MoreVertical /></span></Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            {currentTab?.ID === 1 && note?.TabId !== 1 && <DropdownMenuItem onClick={() => restoreNote(note)}>Restore</DropdownMenuItem>}
+                            <DropdownMenuItem onClick={() => handleDeletion(note)} variant="destructive" >Delete</DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
             </span>
-            <div onClick={e => e.stopPropagation()}>
-                <DropdownMenu>
-                    <DropdownMenuTrigger>
-                        <Button title="Options" className="w-2 h-6 opacity-0 group-hover/note:opacity-100 outline-none border-none shadow-none transition-all duration-200" variant="ghost"><MoreVertical /></Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                        {currentTab?.ID === 1 && note?.TabId !== 1 && <DropdownMenuItem onClick={() => restoreNote(note)}>Restore</DropdownMenuItem>}
-                        <DropdownMenuItem onClick={() => handleDeletion(note)} variant="destructive" >Delete</DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            </div>
         </Button>
     )
 }

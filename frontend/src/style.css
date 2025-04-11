@@ -175,6 +175,10 @@
   background: #474747
 }
 
+div[data-slot="sidebar-content"] button:focus-visible {
+  outline: none;
+}
+
 /* Drag and Drop */
 
 .allowdrag {
