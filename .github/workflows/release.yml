@@ -23,7 +23,7 @@ jobs:
           - name: 'nite-windows-amd64'
             platform: 'windows/amd64'
             os: 'windows-latest'
-          - name: 'nite-darwin-universal'
+          - name: 'Nite'
             platform: 'darwin/universal'
             os: 'macos-latest'
     runs-on: ${{ matrix.build.os }}
