@@ -9,5 +9,8 @@
   "author": {
     "name": "Gregorio Vargas",
     "email": "gregoriovargasmarrero@gmail.com"
+  },
+  "postBuildHooks": {
+    "GOOS/darwin": "mv ./build/bin/Nite.app ./build/bin/nite-darwin-universal.app"
   }
 }
