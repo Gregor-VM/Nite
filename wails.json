@@ -1,7 +1,7 @@
 {
   "$schema": "https://wails.io/schemas/config.v2.json",
   "name": "Nite",
-  "outputfilename": "Nite",
+  "outputfilename": "nite-darwin-universal",
   "frontend:install": "pnpm install",
   "frontend:build": "pnpm run build",
   "frontend:dev:watcher": "pnpm run dev",
@@ -9,8 +9,5 @@
   "author": {
     "name": "Gregorio Vargas",
     "email": "gregoriovargasmarrero@gmail.com"
-  },
-  "postBuildHooks": {
-    "GOOS/darwin": "mv ./build/bin/Nite.app ./build/bin/nite-darwin-universal.app"
   }
 }
